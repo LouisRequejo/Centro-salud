@@ -1,7 +1,7 @@
 CREATE TABLE PACIENTE (id int(10) NOT NULL AUTO_INCREMENT, DNI char(8) NOT NULL, nombres varchar(255) NOT NULL, ape_paterno varchar(255) NOT NULL, ape_materno varchar(255) NOT NULL, f_nacimiento date NOT NULL, telefono char(9) NOT NULL, email varchar(255) NOT NULL, clave varchar(255) NOT NULL, foto_perfil varchar(255), nombre_emergencia varchar(255), numero_emergencia char(9), relacion_emergencia varchar(255), PRIMARY KEY (id));
 CREATE TABLE CONSULTORIO (id int(10) NOT NULL AUTO_INCREMENT, nombre varchar(255) NOT NULL, estado char(1) NOT NULL, id_centro_salud int(10) NOT NULL, PRIMARY KEY (id));
 CREATE TABLE NOTIFICACION (id int(10) NOT NULL AUTO_INCREMENT, id_tipo_notificacion int(10) NOT NULL, id_destinatario int(10), tipo_destinatario int(10), titulo int(10), mensaje int(10), fecha_creacion int(10), PRIMARY KEY (id));
-CREATE TABLE PERSONAL (id int(10) NOT NULL AUTO_INCREMENT, DNI char(8) NOT NULL, nombre varchar(255) NOT NULL, ape_paterno varchar(255) NOT NULL, ape_materno varchar(255) NOT NULL, email varchar(255) NOT NULL, clave varchar(255) NOT NULL, foto_perfil varchar(255) NOT NULL, telefono char(9) NOT NULL, ROLid int(10) NOT NULL, PRIMARY KEY (id));
+CREATE TABLE PERSONAL (id int(10) NOT NULL AUTO_INCREMENT, DNI char(8) NOT NULL, nombre varchar(255) NOT NULL, ape_paterno varchar(255) NOT NULL, ape_materno varchar(255) NOT NULL, email varchar(255) NOT NULL, clave varchar(255) NOT NULL, foto_perfil varchar(255) NOT NULL, telefono char(9) NOT NULL, ROLid int(10) NOT NULL, estado BOOLEAN NOT NULL, PRIMARY KEY (id));
 CREATE TABLE MEDICO (id int(10) NOT NULL AUTO_INCREMENT, nombres varchar(255) NOT NULL, ape_paterno varchar(255) NOT NULL, ape_materno varchar(255) NOT NULL, DNI char(8) NOT NULL UNIQUE, email varchar(255) NOT NULL, telefono char(9) NOT NULL, estado char(1) NOT NULL, id_personal_validado int(10), PRIMARY KEY (id));
 CREATE TABLE ESPECIALIDAD (id int(10) NOT NULL AUTO_INCREMENT, nombre varchar(255) NOT NULL, descripcion varchar(255), PRIMARY KEY (id));
 CREATE TABLE CENTRO_SALUD (id int(10) NOT NULL AUTO_INCREMENT, nombre varchar(255) NOT NULL, direccion varchar(255) NOT NULL, telefono char(9) NOT NULL, PRIMARY KEY (id));
@@ -107,23 +107,22 @@ CREATE PROCEDURE insertarPersonal(
     IN p_clave VARCHAR(255),
     IN p_foto_perfil VARCHAR(255),
     IN p_telefono CHAR(9),
-    IN p_ROLid INT
-)
+    IN p_ROLid INT)
 BEGIN
     IF EXISTS (SELECT 1 FROM PERSONAL WHERE DNI = p_DNI) THEN
         SELECT 'El DNI ya existe' AS mensaje;
     ELSEIF NOT EXISTS (SELECT 1 FROM ROL WHERE id = p_ROLid) THEN
         SELECT 'El rol no existe' AS mensaje;
     ELSE
-        INSERT INTO PERSONAL (DNI, nombre, ape_paterno, ape_materno, email, clave, foto_perfil, telefono, ROLid)
-        VALUES (p_DNI, p_nombre, p_ape_paterno, p_ape_materno, p_email, p_clave, p_foto_perfil, p_telefono, p_ROLid);
+        INSERT INTO PERSONAL (DNI, nombre, ape_paterno, ape_materno, email, clave, foto_perfil, telefono, ROLid, estado)
+        VALUES (p_DNI, p_nombre, p_ape_paterno, p_ape_materno, p_email, p_clave, p_foto_perfil, p_telefono, p_ROLid, TRUE);
         SELECT 'Personal insertado correctamente' AS mensaje;
     END IF;
 END $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE EliminarPersonal(IN p_id)
+CREATE PROCEDURE EliminarPersonal(IN p_id INT)
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
         SELECT 'El personal que intenta eliminar no existe' AS mensaje;
@@ -136,7 +135,7 @@ DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE ActualizarPersonal(
-    IN p_id,
+    IN p_id INT,
     IN p_DNI CHAR(8),
     IN p_nombre VARCHAR(255),
     IN p_ape_paterno VARCHAR(255),
@@ -145,13 +144,31 @@ CREATE PROCEDURE ActualizarPersonal(
     IN p_clave VARCHAR(255),
     IN p_foto_perfil VARCHAR(255),
     IN p_telefono CHAR(9),
-    IN p_ROLid INT)
+    IN p_ROLid INT,
+    IN p_estado BOOLEAN)
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
         SELECT 'El personal que intenta actualizar no existe' AS mensaje;
     ELSE
-        UPDATE PERSONAL SET ID = p_id, 
+        UPDATE PERSONAL SET DNI = p_DNI, NOMBRE = p_nombre, ape_paterno = p_ape_materno, ape_materno = p_ape_materno, email = p_email, clave = p_clave, foto_perfil = p_foto_perfil, telefono = p_telefono, ROLid = p_ROLid, estado = p_estado
+        WHERE ID = p_id;
+        SELECT 'El personal ha sido actualizado correctamente' AS mensaje;
+    END IF;
+END $$
+DELIMITER;
 
-
+DELIMITER $$
+CREATE PROCEDURE DarDeBajaPersonal(IN p_id INT)
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
+        SELECT 'El personal que intenta dar de baja no existe' AS mensaje;
+    ELSEIF (SELECT 1 FROM PERSONAL WHERE ID = p_id and estado = TRUE) THEN
+        SELECT 'El personal ya se encuentra dado de baja' AS mensaje;
+    ELSE
+        UPDATE PERSONAL SET estado = FALSE WHERE ID = p_id;
+        SELECT 'El personal se dio de baja correctamente' AS mensaje;
+    END IF;
+END $$
+DELIMITER ;
 -- Fin procedimientos almacenados para la tabla PERSONAL --
 
