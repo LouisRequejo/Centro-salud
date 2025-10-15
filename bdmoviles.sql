@@ -155,3 +155,42 @@ BEGIN
 
 -- Fin procedimientos almacenados para la tabla PERSONAL --
 
+
+-- Procedimientos almacenados para la tabla DOMICILO --
+
+DELIMITER $$
+CREATE PROCEDURE InsertarDomicilio(IN p_nombre VARCHAR(255), p_direccion varchar(255), p_paciente_id INT)
+BEGIN
+    IF EXISTS (SELECT 1 FROM DOMICILIO WHERE direccion = p_direccion and PACIENTEid = p_paciente_id ) THEN
+        SELECT 'El Este domicilio ya ha sido registrado anteriormente' AS mensaje;
+    ELSE
+        INSERT INTO DOMICILIO (nombre, direccion, PACIENTEid) VALUES (p_nombre, p_direccion,p_paciente_id);
+        SELECT 'Domicilio insertado correctamente' AS mensaje;
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE EliminarDomicilio(IN p_docimicilio INT)
+BEGIN
+        DELETE FROM DOMICILIO WHERE id = p_docimicilio;
+        SELECT 'Domicilio eliminado correctamente' AS mensaje;
+
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE ActualizarDomicilio(IN p_id INT, IN p_nombre VARCHAR(255),  p_direccion varchar(255) )
+BEGIN
+    IF EXISTS (SELECT 1 FROM DOMICILIO WHERE id = p_id) THEN
+        UPDATE DOMICILIO SET nombre = p_nombre, direccion = p_direccion WHERE id = p_id;
+        SELECT 'Domicilio actualizado correctamente' AS mensaje;
+    ELSE
+        SELECT 'El domicilio no existe' AS mensaje;
+    END IF;
+END $$
+DELIMITER ;
+
+
+-- Fin procedimientos almacenados para la tabla DOMICILIO --
+
