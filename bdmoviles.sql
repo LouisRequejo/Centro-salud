@@ -42,4 +42,58 @@ ALTER TABLE DOMICILIO ADD CONSTRAINT FKDOMICILIO767250 FOREIGN KEY (PACIENTEid) 
 
 -- PA --
 
--- END PA --
+-- Procedimientos almacenados para la tabla ROL --
+
+DELIMITER $$
+CREATE PROCEDURE InsertarRol(IN p_nombre VARCHAR(255))
+BEGIN
+    IF EXISTS (SELECT 1 FROM ROL WHERE nombre = p_nombre) THEN
+        SELECT 'El rol ya existe' AS mensaje;
+    ELSE
+        INSERT INTO ROL (nombre) VALUES (p_nombre);
+        SELECT 'Rol insertado correctamente' AS mensaje;
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE EliminarRol(IN p_id INT)
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM ROL WHERE id = p_id) THEN
+        SELECT 'El rol no existe' AS mensaje;
+    ELSEIF EXISTS (SELECT 1 FROM PERSONAL WHERE ROLid = p_id) THEN
+        SELECT 'El rol está asignado a un personal y no puede eliminarse' AS mensaje;
+    ELSE
+        DELETE FROM ROL WHERE id = p_id;
+        SELECT 'Rol eliminado correctamente' AS mensaje;
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE ActualizarRol(IN p_id INT, IN p_nombre VARCHAR(255))
+BEGIN
+    IF EXISTS (SELECT 1 FROM ROL WHERE id = p_id) THEN
+        UPDATE ROL SET nombre = p_nombre WHERE id = p_id;
+        SELECT 'Rol actualizado correctamente' AS mensaje;
+    ELSE
+        SELECT 'El rol no existe' AS mensaje;
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE DarDeBajaRol(IN p_id INT)
+BEGIN
+    IF EXISTS (SELECT 1 FROM ROL WHERE id = p_id) THEN
+        UPDATE ROL SET estado = 'B' WHERE id = p_id;
+        SELECT 'Rol dado de baja correctamente' AS mensaje;
+    ELSE
+        SELECT 'El rol no existe' AS mensaje;
+    END IF;
+END $$
+DELIMITER ;
+
+-- Fin procedimientos almacenados para la tabla ROL --
+
+
