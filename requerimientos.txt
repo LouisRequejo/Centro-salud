@@ -1,0 +1,6 @@
+Flask
+mysqlclient
+pyJWT
+argon2-cffi
+
+# $ pip install -r requerimientos.txt
