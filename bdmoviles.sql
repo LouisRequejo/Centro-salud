@@ -96,4 +96,62 @@ DELIMITER ;
 
 -- Fin procedimientos almacenados para la tabla ROL --
 
+-- Procedimientos almacenados para la tabla PERSONAL --
+DELIMITER $$
+CREATE PROCEDURE insertarPersonal(
+    IN p_DNI CHAR(8),
+    IN p_nombre VARCHAR(255),
+    IN p_ape_paterno VARCHAR(255),
+    IN p_ape_materno VARCHAR(255),
+    IN p_email VARCHAR(255),
+    IN p_clave VARCHAR(255),
+    IN p_foto_perfil VARCHAR(255),
+    IN p_telefono CHAR(9),
+    IN p_ROLid INT
+)
+BEGIN
+    IF EXISTS (SELECT 1 FROM PERSONAL WHERE DNI = p_DNI) THEN
+        SELECT 'El DNI ya existe' AS mensaje;
+    ELSEIF NOT EXISTS (SELECT 1 FROM ROL WHERE id = p_ROLid) THEN
+        SELECT 'El rol no existe' AS mensaje;
+    ELSE
+        INSERT INTO PERSONAL (DNI, nombre, ape_paterno, ape_materno, email, clave, foto_perfil, telefono, ROLid)
+        VALUES (p_DNI, p_nombre, p_ape_paterno, p_ape_materno, p_email, p_clave, p_foto_perfil, p_telefono, p_ROLid);
+        SELECT 'Personal insertado correctamente' AS mensaje;
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE EliminarPersonal(IN p_id)
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
+        SELECT 'El personal que intenta eliminar no existe' AS mensaje;
+    ELSE
+        DELETE FROM PERSONAL WHERE ID = P_id;
+        SELECT 'Personal eliminado correctamente' AS mensaje;
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE ActualizarPersonal(
+    IN p_id,
+    IN p_DNI CHAR(8),
+    IN p_nombre VARCHAR(255),
+    IN p_ape_paterno VARCHAR(255),
+    IN p_ape_materno VARCHAR(255),
+    IN p_email VARCHAR(255),
+    IN p_clave VARCHAR(255),
+    IN p_foto_perfil VARCHAR(255),
+    IN p_telefono CHAR(9),
+    IN p_ROLid INT)
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
+        SELECT 'El personal que intenta actualizar no existe' AS mensaje;
+    ELSE
+        UPDATE PERSONAL SET ID = p_id, 
+
+
+-- Fin procedimientos almacenados para la tabla PERSONAL --
 
