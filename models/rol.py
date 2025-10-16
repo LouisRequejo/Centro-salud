@@ -5,40 +5,42 @@ class Rol:
         pass
 
     def registrar(self, nombre):
-        con = None  # Inicializa las variables fuera del 'try'
-        cursor = None
-        try:
-            con = Conexion().open
-            cursor = con.cursor()
-            sql = "CALL InsertarRol(%s)"
-            
-            cursor.execute(sql, (nombre,))
-            
-            # 1. Lee el resultado PRIMERO
-            resultado_tupla = cursor.fetchone()
-            
-            # 2. Guarda los cambios
-            con.commit()
-            
-            # 3. Limpia el cursor para sincronizar
-            cursor.nextset()
-            
-            # 4. Devuelve el resultado de forma SEGURA
-            if resultado_tupla:
-                return resultado_tupla[0]
-            else:
-                # Esto puede pasar si el procedimiento no devuelve nada
-                return "El procedimiento no devolvió un mensaje."
+            con = None
+            cursor = None
+            try:
+                # Asegúrate que .open sea un MÉTODO que retorna la conexión
+                con = Conexion().open()     # <-- paréntesis
+                cursor = con.cursor()
 
-        except Exception as e:
-            print("EL VERDADERO ERROR ES:", e) # Esto te mostrará el TypeError
-            if con:
-                con.rollback()
-            return None
-        finally:
-            # 5. Cierra todo en el orden correcto
-            # ¡Siempre el cursor ANTES que la conexión!
-            if cursor:
-                cursor.close()
-            if con:
-                con.close()
+                cursor.execute("CALL InsertarRol(%s)", (nombre,))
+
+                # Lee el primer result set (tu SELECT '... AS mensaje')
+                rows = cursor.fetchall()
+                mensaje = rows[0]["mensaje"] if rows else None
+
+                # Drena cualquier result set adicional que deje el CALL
+                while cursor.nextset():
+                    cursor.fetchall()
+
+                con.commit()
+                return mensaje  # devuelve el mensaje del SP
+
+            except Exception as e:
+                # Intenta drenar antes de hacer rollback, para evitar el 2014
+                try:
+                    if cursor:
+                        while cursor.nextset():
+                            cursor.fetchall()
+                except Exception:
+                    pass
+                if con:
+                    con.rollback()
+                # Loguea y propaga o devuelve None según tu estilo
+                print("EL VERDADERO ERROR ES:", e)
+                return None
+
+            finally:
+                if cursor:
+                    cursor.close()
+                if con:
+                    con.close()
