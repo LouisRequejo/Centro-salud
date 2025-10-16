@@ -151,3 +151,35 @@ class Rol:
                 cursor.close()
             if con:
                 con.close()       
+
+    def listar(self):
+        con = None
+        cursor = None
+        try:
+            con = Conexion().open
+            cursor = con.cursor()
+
+            sql = "CALL ListarRoles()"
+            cursor.execute(sql)
+
+            rows = cursor.fetchall()
+            roles = [{'id': row['id'], 'nombre': row['nombre'], 'estado': row['estado']} for row in rows]
+
+            while cursor.nextset():
+                cursor.fetchall()
+
+            return roles
+        except Exception as e:
+            print("ERROR listar():", e)
+            try:
+                if cursor:
+                    while cursor.nextset():
+                        cursor.fetchall()
+            except Exception:
+                pass
+            return None
+        finally:
+            if cursor:
+                cursor.close()
+            if con:
+                con.close()

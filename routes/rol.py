@@ -72,3 +72,10 @@ def dar_baja_rol(rol_id):
     if low == 'el rol no existe':
         return jsonify({'data': None, 'status': False, 'message': mensaje}), 404
     return jsonify({'data': None, 'status': False, 'message': mensaje}), 400
+
+@ws_rol.route('/roles', methods=['GET'])
+def listar_roles():
+    roles = rol.listar()
+    if roles is None:
+        return jsonify({'data': None, 'status': False, 'message': 'Error al obtener los roles'}), 500
+    return jsonify({'data': roles, 'status': True, 'message': 'Roles obtenidos correctamente'}), 200
