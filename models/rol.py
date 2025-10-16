@@ -9,7 +9,7 @@ class Rol:
             cursor = None
             try:
                 # Asegúrate que .open sea un MÉTODO que retorna la conexión
-                con = Conexion().open()     # <-- paréntesis
+                con = Conexion().open   # <-- paréntesis
                 cursor = con.cursor()
 
                 cursor.execute("CALL InsertarRol(%s)", (nombre,))
