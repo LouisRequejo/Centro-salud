@@ -159,7 +159,7 @@ class Rol:
                 con = Conexion().open
                 cursor = con.cursor()
 
-                sql = "SELECT id, nombre, estado FROM roles"
+                sql = "SELECT id, nombre, estado FROM rol"
                 cursor.execute(sql)
 
                 rows = cursor.fetchall()
