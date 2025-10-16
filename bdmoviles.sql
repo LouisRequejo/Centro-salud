@@ -11,7 +11,7 @@ C->Cancelada
 A->Atendida', codigo_qr varchar(255) NOT NULL comment 'direccion de la imagen del codigo qr generado para una cita', fecha_creacion timestamp NOT NULL, TURNOid int(10) NOT NULL, PRIMARY KEY (id));
 CREATE TABLE CALIFICACION_CITA (id_cita int(10) NOT NULL, puntuacion int(10), comentarion text, fecha_creacion timestamp NULL, PRIMARY KEY (id_cita));
 CREATE TABLE CHAT (id int(10) NOT NULL AUTO_INCREMENT, id_paciente int(10) NOT NULL, id_medico int(10) NOT NULL, fecha_creacion int(10), PRIMARY KEY (id));
-CREATE TABLE MENSAJES_CHAT (id int(10), id_chat int(10) NOT NULL, id_emisor int(10), tipo_emisor int(10), contenido int(10), fecha_hora int(10), visto int(10));
+CREATE TABLE MENSAJES_CHAT (id int(10), id_chat int(10) NOT NULL, id_emisor int(10), tipo_emisor int(10), contenido int(10), fecha_hora int(10), visto int(10), PRIMARY KEY (id));
 CREATE TABLE TIPO_NOTIFICACION (id int(10) NOT NULL AUTO_INCREMENT, nombre int(10), PRIMARY KEY (id));
 CREATE TABLE PROGRAMACION (id int(10) NOT NULL AUTO_INCREMENT, fecha_inicial int(10), fecha_final int(10), MEDICOid int(10) NOT NULL, CONSULTORIOid int(10) NOT NULL, ESPECIALIDADid int(10) NOT NULL, PRIMARY KEY (id));
 CREATE TABLE HORARIO (id int(10) NOT NULL AUTO_INCREMENT, hora_inicial time NOT NULL, hora_final time NOT NULL, dia_semana varchar(10) NOT NULL comment 'Lunes
@@ -23,7 +23,7 @@ Sabado
 Domingo', PROGRAMACIONid int(10) NOT NULL, PRIMARY KEY (id));
 CREATE TABLE TURNO (id int(10) NOT NULL AUTO_INCREMENT, hora_inicio time NOT NULL, hora_fin time NOT NULL, estado char(1) NOT NULL comment 'D=Disponible
 O=Ocupado', HORARIOid int(10) NOT NULL, PRIMARY KEY (id));
-CREATE TABLE ROL (id int(10) NOT NULL AUTO_INCREMENT, nombre int(10), PRIMARY KEY (id));
+CREATE TABLE ROL (id int(10) NOT NULL AUTO_INCREMENT, nombre VARCHAR(255), PRIMARY KEY (id));
 CREATE TABLE DOMICILIO (id int(11) NOT NULL AUTO_INCREMENT, nombre varchar(255) NOT NULL, direccion varchar(255) NOT NULL, PACIENTEid int(10) NOT NULL, PRIMARY KEY (id));
 ALTER TABLE MENSAJES_CHAT ADD CONSTRAINT FKMENSAJES_C709446 FOREIGN KEY (id_chat) REFERENCES CHAT (id);
 ALTER TABLE CITA ADD CONSTRAINT FKCITA698044 FOREIGN KEY (id_paciente) REFERENCES PACIENTE (id);

@@ -6,7 +6,7 @@ ws_rol = Blueprint('ws_rol', __name__)
 rol = Rol()
 
 
-@ws_rol.route('/rol', methods=['POST'])
+@ws_rol.route('/register', methods=['POST'])
 def crear_rol():
     data = request.get_json()
     nombre = data.get('nombre')

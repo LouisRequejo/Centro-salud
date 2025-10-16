@@ -1,6 +1,9 @@
 from flask import Flask
 
+from routes.rol import ws_rol
+
 app = Flask(__name__)
+app.register_blueprint(ws_rol, url_prefix='/rol')
 
 
 @app.route('/')
