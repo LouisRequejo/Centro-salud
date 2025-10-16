@@ -11,9 +11,11 @@ class Rol:
         try:
             cursor.execute(sql, (nombre,))
             con.commit()
-            resultado = cursor.fetchone()
-            return resultado
+            cursor.nextset()
+            resultado_tupla = cursor.fetchone()        
+            return resultado_tupla[0] if resultado_tupla else None
         except Exception as e:
-            print("Error:", e)
+            con.rollback()
+            return None
         finally:
             con.close()
