@@ -15,6 +15,7 @@ class Rol:
             cursor.nextset()
             return resultado_tupla[0] if resultado_tupla else None
         except Exception as e:
+            print("Error en registrar rol:", e) # Imprime el error para poder depurar
             con.rollback()
             return None
         finally:
