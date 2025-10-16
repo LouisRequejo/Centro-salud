@@ -10,6 +10,7 @@ class Rol:
         sql = "CALL InsertarRol(%s)"
         try:
             cursor.execute(sql, (nombre,))
+            con.commit()
             resultado = cursor.fetchone()
             return resultado
         except Exception as e:
