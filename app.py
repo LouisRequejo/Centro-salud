@@ -1,9 +1,11 @@
 from flask import Flask
 
 from routes.rol import ws_rol
+from routes.domicilio import ws_domicilio
 
 app = Flask(__name__)
 app.register_blueprint(ws_rol, url_prefix='/rol')
+app.register_blueprint(ws_domicilio, url_prefix = '/domicilio')
 
 
 @app.route('/')
