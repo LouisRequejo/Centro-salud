@@ -124,10 +124,10 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE EliminarPersonal(IN p_id INT)
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
+    IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE id = p_id) THEN
         SELECT 'El personal que intenta eliminar no existe' AS mensaje;
     ELSE
-        DELETE FROM PERSONAL WHERE ID = P_id;
+        DELETE FROM PERSONAL WHERE id = p_id;
         SELECT 'Personal eliminado correctamente' AS mensaje;
     END IF;
 END $$
@@ -150,7 +150,7 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
         SELECT 'El personal que intenta actualizar no existe' AS mensaje;
     ELSE
-        UPDATE PERSONAL SET DNI = p_DNI, NOMBRE = p_nombre, ape_paterno = p_ape_materno, ape_materno = p_ape_materno, email = p_email, clave = p_clave, foto_perfil = p_foto_perfil, telefono = p_telefono, ROLid = p_ROLid, estado = p_estado
+        UPDATE PERSONAL SET DNI = p_DNI, NOMBRE = p_nombre, ape_paterno = p_ape_paterno, ape_materno = p_ape_materno, email = p_email, clave = p_clave, foto_perfil = p_foto_perfil, telefono = p_telefono, ROLid = p_ROLid, estado = p_estado
         WHERE ID = p_id;
         SELECT 'El personal ha sido actualizado correctamente' AS mensaje;
     END IF;
@@ -162,7 +162,7 @@ CREATE PROCEDURE DarDeBajaPersonal(IN p_id INT)
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
         SELECT 'El personal que intenta dar de baja no existe' AS mensaje;
-    ELSEIF (SELECT 1 FROM PERSONAL WHERE ID = p_id and estado = TRUE) THEN
+    ELSEIF (SELECT 1 FROM PERSONAL WHERE ID = p_id and estado = FALSE) THEN
         SELECT 'El personal ya se encuentra dado de baja' AS mensaje;
     ELSE
         UPDATE PERSONAL SET estado = FALSE WHERE ID = p_id;
@@ -210,4 +210,3 @@ DELIMITER ;
 
 
 -- Fin procedimientos almacenados para la tabla DOMICILIO --
-
