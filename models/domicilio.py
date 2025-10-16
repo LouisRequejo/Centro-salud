@@ -1,70 +1,67 @@
 from conexionBD import Conexion
 
-class Rol:
+class Domicilio:
     def __init__(self):
         pass
 
-    def registrar(self, nombre):
-            con = None
-            cursor = None
-            try:
-                con = Conexion().open 
-                cursor = con.cursor()
-
-                cursor.execute("CALL InsertarRol(%s)", (nombre,))
-
-                rows = cursor.fetchall()
-                mensaje = rows[0]["mensaje"] if rows else None
-
-                while cursor.nextset():
-                    cursor.fetchall()
-
-                con.commit()
-                return mensaje  
-
-            except Exception as e:
-                try:
-                    if cursor:
-                        while cursor.nextset():
-                            cursor.fetchall()
-                except Exception:
-                    pass
-                if con:
-                    con.rollback()
-                print("EL VERDADERO ERROR ES:", e)
-                return None
-            finally:
-                if cursor:
-                    cursor.close()
-                if con:
-                    con.close()
-
-    def eliminar(self, rol_id):
+    # ----- INSERTAR -----
+    def registrar(self, nombre, direccion, paciente_id):
         con = None
         cursor = None
         try:
             con = Conexion().open
             cursor = con.cursor()
 
-            sql = "CALL EliminarRol(%s)"
-            cursor.execute(sql, (rol_id,))
+            sql = "CALL InsertarDomicilio(%s, %s, %s)"
+            cursor.execute(sql, (nombre, direccion, paciente_id))
 
-            # 1) Lee el primer result set (mensaje)
             rows = cursor.fetchall()
             mensaje = rows[0]['mensaje'] if rows else None
 
-            # 2) Drena cualquier result set pendiente
+            # Drenar cualquier conjunto de resultados restante
             while cursor.nextset():
                 cursor.fetchall()
 
-            # 3) Commit
             con.commit()
+            return mensaje or "El procedimiento no devolvió un mensaje."
+        except Exception as e:
+            print("ERROR registrar():", e)
+            try:
+                if cursor:
+                    while cursor.nextset():
+                        cursor.fetchall()
+            except Exception:
+                pass
+            if con:
+                con.rollback()
+            return None
+        finally:
+            if cursor:
+                cursor.close()
+            if con:
+                con.close()
 
-            # 4) Devuelve mensaje seguro
+    # ----- ELIMINAR -----
+    def eliminar(self, domicilio_id):
+        con = None
+        cursor = None
+        try:
+            con = Conexion().open
+            cursor = con.cursor()
+
+            sql = "CALL EliminarDomicilio(%s)"
+            cursor.execute(sql, (domicilio_id,))
+
+            rows = cursor.fetchall()
+            mensaje = rows[0]['mensaje'] if rows else None
+
+            while cursor.nextset():
+                cursor.fetchall()
+
+            con.commit()
             return mensaje or "El procedimiento no devolvió un mensaje."
         except Exception as e:
             print("ERROR eliminar():", e)
-            # drenar antes de rollback para evitar 'Commands out of sync'
             try:
                 if cursor:
                     while cursor.nextset():
@@ -81,15 +78,15 @@ class Rol:
                 con.close()
 
     # ----- ACTUALIZAR -----
-    def actualizar(self, rol_id, nombre):
+    def actualizar(self, domicilio_id, nombre, direccion):
         con = None
         cursor = None
         try:
             con = Conexion().open
-            cursor = con.cursor
+            cursor = con.cursor()
 
-            sql = "CALL ActualizarRol(%s, %s)"
-            cursor.execute(sql, (rol_id, nombre))
+            sql = "CALL ActualizarDomicilio(%s, %s, %s)"
+            cursor.execute(sql, (domicilio_id, nombre, direccion))
 
             rows = cursor.fetchall()
             mensaje = rows[0]['mensaje'] if rows else None
@@ -115,39 +112,3 @@ class Rol:
                 cursor.close()
             if con:
                 con.close()
-
-    # ----- DAR DE BAJA -----
-    def dar_de_baja(self, rol_id):
-        con = None
-        cursor = None
-        try:
-            con = Conexion().open
-            cursor = con.cursor()
-
-            sql = "CALL DarDeBajaRol(%s)"
-            cursor.execute(sql, (rol_id,))
-
-            rows = cursor.fetchall()
-            mensaje = rows[0]['mensaje'] if rows else None
-
-            while cursor.nextset():
-                cursor.fetchall()
-
-            con.commit()
-            return mensaje or "El procedimiento no devolvió un mensaje."
-        except Exception as e:
-            print("ERROR dar_de_baja():", e)
-            try:
-                if cursor:
-                    while cursor.nextset():
-                        cursor.fetchall()
-            except Exception:
-                pass
-            if con:
-                con.rollback()
-            return None
-        finally:
-            if cursor:
-                cursor.close()
-            if con:
-                con.close()       
