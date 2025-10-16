@@ -159,11 +159,11 @@ class Rol:
                 con = Conexion().open
                 cursor = con.cursor()
 
-                sql = "SELECT id, nombre, estado FROM rol"
+                sql = "SELECT id, nombre, estado FROM ROL"
                 cursor.execute(sql)
 
                 rows = cursor.fetchall()
-                roles = [{'id': row['id'], 'nombre': row['nombre'], 'estado': row['estado']} for row in rows]
+                roles = [{'id': row['id'], 'nombre': row['nombre']} for row in rows]
 
                 return roles
         except Exception as e:
