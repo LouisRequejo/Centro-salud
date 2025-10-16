@@ -86,7 +86,7 @@ class Rol:
         cursor = None
         try:
             con = Conexion().open
-            cursor = con.cursor
+            cursor = con.cursor()
 
             sql = "CALL ActualizarRol(%s, %s)"
             cursor.execute(sql, (rol_id, nombre))

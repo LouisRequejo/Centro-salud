@@ -2,7 +2,7 @@ from conexionBD import Conexion
 
 class Especialidad:
     def __init__(self):
-        self.db = Conexion()
+        self.db = Conexion().open
 
     def registrar(self, nombre, descripcion):
         """

@@ -25,7 +25,7 @@ def crear_rol():
     ok = mensaje.lower().startswith('rol insertado')
     return jsonify({'data': None, 'status': ok, 'message': mensaje}), 200 if ok else 409
 
-@ws_rol.route('/rol/<int:rol_id>', methods=['DELETE'])
+@ws_rol.route('/rol/eliminar/<int:rol_id>', methods=['DELETE'])
 def eliminar_rol(rol_id):
     mensaje = rol.eliminar(rol_id)
     if mensaje is None:

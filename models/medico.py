@@ -2,7 +2,7 @@ from conexionBD import Conexion
 
 class Medico:
     def __init__(self):
-        self.db = Conexion()
+        self.db = Conexion().open
 
     def registrar(self, nombres, ape_paterno, ape_materno, dni, email, telefono, id_personal_validado):
         """
