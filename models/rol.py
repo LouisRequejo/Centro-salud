@@ -18,5 +18,5 @@ class Rol:
             con.rollback()
             return None
         finally:
-            con.close()
             cursor.close()
+            con.close()
