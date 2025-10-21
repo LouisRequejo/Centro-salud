@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Médicos - Clínica Ham{% endblock %}
+
+{% block page_title %}Gestión de Médicos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/medicos.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="filter-bar">
+    <div class="search-box-inline">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Buscar médicos..." id="searchInput">
+    </div>
+    <div class="filter-tags">
+        <button class="filter-tag active" data-specialty="all">
+            Todas las Especialidades
+        </button>
+        <button class="filter-tag" data-specialty="cardiologia">
+            <i class="fas fa-heart"></i>
+            Cardiología
+        </button>
+        <button class="filter-tag" data-specialty="pediatria">
+            <i class="fas fa-baby"></i>
+            Pediatría
+        </button>
+        <button class="filter-tag" data-specialty="medicina-general">
+            <i class="fas fa-stethoscope"></i>
+            Medicina General
+        </button>
+        <button class="filter-tag" data-specialty="traumatologia">
+            <i class="fas fa-bone"></i>
+            Traumatología
+        </button>
+    </div>
+    <div class="filter-actions">
+        <select class="filter-select" id="statusFilter">
+            <option value="all">Todos los Estados</option>
+            <option value="validado">Validado</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="no-validado">No Validado</option>
+        </select>
+        <button class="btn btn-primary" id="addDoctorBtn">
+            <i class="fas fa-plus"></i>
+            Agregar Médico
+        </button>
+    </div>
+</div>
+
+<div class="doctors-grid" id="doctorsGrid">
+    <div class="doctor-card" data-specialty="cardiologia" data-status="validado">
+        <div class="card-header">
+            <div class="doctor-avatar">
+                <img src="https://ui-avatars.com/api/?name=Juan+Perez&background=1976d2&color=fff" alt="Dr. Juan Pérez">
+            </div>
+            <span class="status-badge status-validado">
+                <i class="fas fa-check-circle"></i>
+                Validado
+            </span>
+        </div>
+        <div class="card-body">
+            <h3 class="doctor-name">Dr. Juan Pérez López</h3>
+            <p class="doctor-specialty">
+                <i class="fas fa-heart"></i>
+                Cardiología
+            </p>
+            <div class="doctor-info">
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>juan.perez@clinica.com</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+57 300 123 4567</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-id-card"></i>
+                    <span>Licencia: MED-2024-001</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-secondary btn-details">
+                <i class="fas fa-eye"></i>
+                Ver Detalles
+            </button>
+            <button class="btn btn-outline btn-credentials">
+                <i class="fas fa-certificate"></i>
+                Ver Credenciales
+            </button>
+        </div>
+    </div>
+
+    <div class="doctor-card" data-specialty="pediatria" data-status="pendiente">
+        <div class="card-header">
+            <div class="doctor-avatar">
+                <img src="https://ui-avatars.com/api/?name=Maria+Garcia&background=e91e63&color=fff"
+                    alt="Dra. María García">
+            </div>
+            <span class="status-badge status-pendiente">
+                <i class="fas fa-clock"></i>
+                Pendiente
+            </span>
+        </div>
+        <div class="card-body">
+            <h3 class="doctor-name">Dra. María García Ruiz</h3>
+            <p class="doctor-specialty">
+                <i class="fas fa-baby"></i>
+                Pediatría
+            </p>
+            <div class="doctor-info">
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>maria.garcia@clinica.com</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+57 300 234 5678</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-id-card"></i>
+                    <span>Licencia: MED-2024-002</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-secondary btn-details">
+                <i class="fas fa-eye"></i>
+                Ver Detalles
+            </button>
+            <button class="btn btn-primary btn-validate">
+                <i class="fas fa-check"></i>
+                Validar Credenciales
+            </button>
+        </div>
+    </div>
+
+    <div class="doctor-card" data-specialty="medicina-general" data-status="validado">
+        <div class="card-header">
+            <div class="doctor-avatar">
+                <img src="https://ui-avatars.com/api/?name=Carlos+Martinez&background=4caf50&color=fff"
+                    alt="Dr. Carlos Martínez">
+            </div>
+            <span class="status-badge status-validado">
+                <i class="fas fa-check-circle"></i>
+                Validado
+            </span>
+        </div>
+        <div class="card-body">
+            <h3 class="doctor-name">Dr. Carlos Martínez Soto</h3>
+            <p class="doctor-specialty">
+                <i class="fas fa-stethoscope"></i>
+                Medicina General
+            </p>
+            <div class="doctor-info">
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>carlos.martinez@clinica.com</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+57 300 345 6789</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-id-card"></i>
+                    <span>Licencia: MED-2024-003</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-secondary btn-details">
+                <i class="fas fa-eye"></i>
+                Ver Detalles
+            </button>
+            <button class="btn btn-outline btn-credentials">
+                <i class="fas fa-certificate"></i>
+                Ver Credenciales
+            </button>
+        </div>
+    </div>
+
+    <div class="doctor-card" data-specialty="traumatologia" data-status="no-validado">
+        <div class="card-header">
+            <div class="doctor-avatar">
+                <img src="https://ui-avatars.com/api/?name=Ana+Lopez&background=ff9800&color=fff" alt="Dra. Ana López">
+            </div>
+            <span class="status-badge status-no-validado">
+                <i class="fas fa-times-circle"></i>
+                No Validado
+            </span>
+        </div>
+        <div class="card-body">
+            <h3 class="doctor-name">Dra. Ana López Torres</h3>
+            <p class="doctor-specialty">
+                <i class="fas fa-bone"></i>
+                Traumatología
+            </p>
+            <div class="doctor-info">
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>ana.lopez@clinica.com</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+57 300 456 7890</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-id-card"></i>
+                    <span>Licencia: Pendiente</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-secondary btn-details">
+                <i class="fas fa-eye"></i>
+                Ver Detalles
+            </button>
+            <button class="btn btn-primary btn-validate">
+                <i class="fas fa-check"></i>
+                Validar Credenciales
+            </button>
+        </div>
+    </div>
+
+    <div class="doctor-card" data-specialty="cardiologia" data-status="validado">
+        <div class="card-header">
+            <div class="doctor-avatar">
+                <img src="https://ui-avatars.com/api/?name=Luis+Rodriguez&background=9c27b0&color=fff"
+                    alt="Dr. Luis Rodríguez">
+            </div>
+            <span class="status-badge status-validado">
+                <i class="fas fa-check-circle"></i>
+                Validado
+            </span>
+        </div>
+        <div class="card-body">
+            <h3 class="doctor-name">Dr. Luis Rodríguez Vega</h3>
+            <p class="doctor-specialty">
+                <i class="fas fa-heart"></i>
+                Cardiología
+            </p>
+            <div class="doctor-info">
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>luis.rodriguez@clinica.com</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+57 300 567 8901</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-id-card"></i>
+                    <span>Licencia: MED-2024-005</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-secondary btn-details">
+                <i class="fas fa-eye"></i>
+                Ver Detalles
+            </button>
+            <button class="btn btn-outline btn-credentials">
+                <i class="fas fa-certificate"></i>
+                Ver Credenciales
+            </button>
+        </div>
+    </div>
+
+    <div class="doctor-card" data-specialty="pediatria" data-status="validado">
+        <div class="card-header">
+            <div class="doctor-avatar">
+                <img src="https://ui-avatars.com/api/?name=Sofia+Hernandez&background=00bcd4&color=fff"
+                    alt="Dra. Sofía Hernández">
+            </div>
+            <span class="status-badge status-validado">
+                <i class="fas fa-check-circle"></i>
+                Validado
+            </span>
+        </div>
+        <div class="card-body">
+            <h3 class="doctor-name">Dra. Sofía Hernández Cruz</h3>
+            <p class="doctor-specialty">
+                <i class="fas fa-baby"></i>
+                Pediatría
+            </p>
+            <div class="doctor-info">
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>sofia.hernandez@clinica.com</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <span>+57 300 678 9012</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-id-card"></i>
+                    <span>Licencia: MED-2024-006</span>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <button class="btn btn-secondary btn-details">
+                <i class="fas fa-eye"></i>
+                Ver Detalles
+            </button>
+            <button class="btn btn-outline btn-credentials">
+                <i class="fas fa-certificate"></i>
+                Ver Credenciales
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="pagination">
+    <button class="pagination-btn" disabled>
+        <i class="fas fa-chevron-left"></i>
+        Anterior
+    </button>
+    <div class="pagination-numbers">
+        <button class="pagination-number active">1</button>
+        <button class="pagination-number">2</button>
+        <button class="pagination-number">3</button>
+        <span class="pagination-dots">...</span>
+        <button class="pagination-number">10</button>
+    </div>
+    <button class="pagination-btn">
+        Siguiente
+        <i class="fas fa-chevron-right"></i>
+    </button>
+</div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/medicos.js') }}"></script>
+{% endblock %}

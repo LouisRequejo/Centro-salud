@@ -1,6 +1,7 @@
 # webservices/personal.py
 from flask import Blueprint, request, jsonify
 from models.personal import Personal
+from tools.jwt_utils import generar_token
 
 ws_personal = Blueprint('ws_personal', __name__)
 personal = Personal()
@@ -8,7 +9,6 @@ personal = Personal()
 def _resp(data=None, ok=True, message='', code=200):
     return jsonify({'data': data, 'status': ok, 'message': message}), code
 
-# ============ CREATE ============
 @ws_personal.route('/personal/register', methods=['POST'])
 def crear_personal():
     data = request.get_json(silent=True) or {}
@@ -23,7 +23,6 @@ def crear_personal():
     telefono    = (data.get('telefono') or '').strip()
     ROLid       = data.get('ROLid')
 
-    # Validaciones mínimas
     if not (DNI and len(DNI) == 8 and DNI.isdigit()):
         return _resp(None, False, 'DNI inválido (8 dígitos)', 400)
     for campo, val in [('nombre',nombre), ('ape_paterno',ape_paterno), ('ape_materno',ape_materno),
@@ -48,7 +47,6 @@ def crear_personal():
         return _resp(None, False, mensaje, 404)
     return _resp(None, False, mensaje, 400)
 
-# ============ DELETE ============
 @ws_personal.route('/personal/<int:personal_id>', methods=['DELETE'])
 def eliminar_personal(personal_id):
     mensaje = personal.eliminar(personal_id)
@@ -62,7 +60,6 @@ def eliminar_personal(personal_id):
         return _resp(None, False, mensaje, 404)
     return _resp(None, False, mensaje, 400)
 
-# ============ UPDATE ============
 @ws_personal.route('/personal/<int:personal_id>', methods=['PUT'])
 def actualizar_personal(personal_id):
     data = request.get_json(silent=True) or {}
@@ -78,7 +75,6 @@ def actualizar_personal(personal_id):
     ROLid       = data.get('ROLid')
     estado      = data.get('estado')
 
-    # Validaciones mínimas
     if not (DNI and len(DNI) == 8 and DNI.isdigit()):
         return _resp(None, False, 'DNI inválido (8 dígitos)', 400)
     for campo, val in [('nombre',nombre), ('ape_paterno',ape_paterno), ('ape_materno',ape_materno),
@@ -105,7 +101,6 @@ def actualizar_personal(personal_id):
         return _resp(None, False, mensaje, 404)
     return _resp(None, False, mensaje, 400)
 
-# ============ BAJA ============
 @ws_personal.route('/personal/<int:personal_id>/baja', methods=['PATCH'])
 def dar_baja_personal(personal_id):
     mensaje = personal.dar_de_baja(personal_id)
@@ -120,3 +115,42 @@ def dar_baja_personal(personal_id):
     if low == 'el personal que intenta dar de baja no existe':
         return _resp(None, False, mensaje, 404)
     return _resp(None, False, mensaje, 400)
+
+@ws_personal.route('/login', methods=['POST'])
+def login_personal():
+    try:
+        data = request.get_json(silent=True) or {}
+        
+        email = data.get('email', '').strip()
+        password = data.get('password', '').strip()
+        
+        if not email or not password:
+            return _resp(None, False, 'Email y contraseña son requeridos', 400)
+        
+        usuario = personal.login(email, password)
+        
+        if usuario:
+            # Generar token JWT
+            token = generar_token({
+                'id': usuario['id'],
+                'email': usuario['email'],
+                'nombre': usuario['nombre']
+            })
+            
+            return jsonify({
+                'status': True,
+                'message': 'Login exitoso',
+                'token': token,
+                'data': {
+                    'id': usuario['id'],
+                    'nombre': usuario['nombre'],
+                    'email': usuario['email']
+                },
+                'redirect': '/dashboard'
+            }), 200
+        else:
+            return _resp(None, False, 'Correo o contraseña incorrectos', 401)
+            
+    except Exception as e:
+        print(f"Error en login: {e}")
+        return _resp(None, False, 'Error interno del servidor', 500)
