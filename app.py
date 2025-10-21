@@ -11,7 +11,7 @@ app.register_blueprint(ws_rol, url_prefix='/rol')
 app.register_blueprint(ws_medico, url_prefix='/medico')
 app.register_blueprint(ws_especialidad, url_prefix='/especialidad')
 app.register_blueprint(ws_domicilio, url_prefix='/domicilio')
-app.register_blueprint(ws_personal, url_prefix='')
+app.register_blueprint(ws_personal, url_prefix='/personal')
 
 @app.route('/')
 def home():

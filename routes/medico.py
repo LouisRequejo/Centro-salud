@@ -14,7 +14,7 @@ medico = Medico()
 FOTOS_MEDICOS =  os.path.join(os.path.dirname(os.path.dirname(__file__)), 'uploads', 'fotos','medicos')
 
 # Crear un endpoint para registrar nuevos médicos
-@ws_medico.route('/medico/registrar', methods=['POST'])
+@ws_medico.route('/registrar', methods=['POST'])
 @jwt_token_requerido
 def registrar():
     # Obtener los datos que se envían como parámetros de entrada
@@ -51,7 +51,7 @@ def registrar():
         return jsonify({'status': False, 'data': None, 'message': str(e)}), 500
 
 # Crear un endpoint para actualizar al médico
-@ws_medico.route('/medico/actualizar', methods=['PUT'])
+@ws_medico.route('/actualizar', methods=['PUT'])
 @jwt_token_requerido
 def actualizar():
     # Obtener los datos que se envían como parámetros de entrada
@@ -83,7 +83,7 @@ def actualizar():
         return jsonify({'status': False, 'data': None, 'message': str(e)}), 500
 
 # Crear un endpoint para dar de baja a un médico
-@ws_medico.route('/medico/darbaja', methods=['DELETE'])
+@ws_medico.route('/darbaja', methods=['DELETE'])
 @jwt_token_requerido
 def darbaja():
     # Obtener los datos que se envían como parámetros de entrada
@@ -107,7 +107,7 @@ def darbaja():
         return jsonify({'status': False, 'data': None, 'message': str(e)}), 500
 
 # Crear un endpoint para actualizar la foto del médico
-@ws_medico.route('/medico/actualizarfoto', methods=['PUT'])
+@ws_medico.route('/actualizarfoto', methods=['PUT'])
 @jwt_token_requerido
 def actualizarfoto():
     # Obtener los datos que se envían como parámetros de entrada
@@ -141,7 +141,7 @@ def actualizarfoto():
         return jsonify({'status': False, 'data': None, 'message': str(e)}), 500
 
 # Crear un endpoint para obtener la foto del médico mediante su id
-@ws_medico.route('/medico/foto/<id>', methods=['GET'])
+@ws_medico.route('/foto/<id>', methods=['GET'])
 def obtener_foto(id):
     # Validar si se cuenta con el id para mostrar la foto
     if not id:
@@ -154,5 +154,13 @@ def obtener_foto(id):
         else:
             # Devuelve una imagen por defecto si el médico no tiene foto
             return send_from_directory(FOTOS_MEDICOS, 'default.png')
+    except Exception as e:
+        return jsonify({'status': False, 'data': None, 'message': str(e)}), 500
+    
+@ws_medico.route('/listar', methods=['GET'])
+def listar_medicos():
+    try:
+        resultado = medico.listar_todos()
+        return jsonify({'status': True, 'data': resultado, 'message': 'Médicos listados correctamente'}), 200
     except Exception as e:
         return jsonify({'status': False, 'data': None, 'message': str(e)}), 500
