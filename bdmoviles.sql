@@ -1,34 +1,163 @@
-CREATE TABLE PACIENTE (id int(10) NOT NULL AUTO_INCREMENT, DNI char(8) NOT NULL, nombres varchar(255) NOT NULL, ape_paterno varchar(255) NOT NULL, ape_materno varchar(255) NOT NULL, f_nacimiento date NOT NULL, telefono char(9) NOT NULL, email varchar(255) NOT NULL, clave varchar(255) NOT NULL, foto_perfil varchar(255), nombre_emergencia varchar(255), numero_emergencia char(9), relacion_emergencia varchar(255), PRIMARY KEY (id));
-CREATE TABLE CONSULTORIO (id int(10) NOT NULL AUTO_INCREMENT, nombre varchar(255) NOT NULL, estado char(1) NOT NULL, id_centro_salud int(10) NOT NULL, PRIMARY KEY (id));
-CREATE TABLE NOTIFICACION (id int(10) NOT NULL AUTO_INCREMENT, id_tipo_notificacion int(10) NOT NULL, id_destinatario int(10), tipo_destinatario int(10), titulo int(10), mensaje int(10), fecha_creacion int(10), PRIMARY KEY (id));
-CREATE TABLE PERSONAL (id int(10) NOT NULL AUTO_INCREMENT, DNI char(8) NOT NULL, nombre varchar(255) NOT NULL, ape_paterno varchar(255) NOT NULL, ape_materno varchar(255) NOT NULL, email varchar(255) NOT NULL, clave varchar(255) NOT NULL, foto_perfil varchar(255) NOT NULL, telefono char(9) NOT NULL, ROLid int(10) NOT NULL, estado BOOLEAN NOT NULL, PRIMARY KEY (id));
-CREATE TABLE MEDICO (id int(10) NOT NULL AUTO_INCREMENT, nombres varchar(255) NOT NULL, ape_paterno varchar(255) NOT NULL, ape_materno varchar(255) NOT NULL, DNI char(8) NOT NULL UNIQUE, email varchar(255) NOT NULL, telefono char(9) NOT NULL, estado char(1) NOT NULL, id_personal_validado int(10), PRIMARY KEY (id));
-CREATE TABLE ESPECIALIDAD (id int(10) NOT NULL AUTO_INCREMENT, nombre varchar(255) NOT NULL, descripcion varchar(255), PRIMARY KEY (id));
-CREATE TABLE CENTRO_SALUD (id int(10) NOT NULL AUTO_INCREMENT, nombre varchar(255) NOT NULL, direccion varchar(255) NOT NULL, telefono char(9) NOT NULL, PRIMARY KEY (id));
-CREATE TABLE CITA (id int(10) NOT NULL AUTO_INCREMENT, id_paciente int(10) NOT NULL, tipo_atencion char(1) NOT NULL comment 'P->Presencial
-D->Domicilio', direccion_domicilio varchar(255) NOT NULL, estado char(1) NOT NULL comment 'P-> Pendiente
+DROP TABLE IF EXISTS CALIFICACION_CITA;
+DROP TABLE IF EXISTS CITA;
+DROP TABLE IF EXISTS TURNO;
+DROP TABLE IF EXISTS HORARIO;
+DROP TABLE IF EXISTS PROGRAMACION;
+DROP TABLE IF EXISTS CONSULTORIO;
+DROP TABLE IF EXISTS CENTRO_SALUD;
+DROP TABLE IF EXISTS DOMICILIO;
+DROP TABLE IF EXISTS PACIENTE;
+DROP TABLE IF EXISTS PERSONAL;
+DROP TABLE IF EXISTS MEDICO;
+DROP TABLE IF EXISTS ESPECIALIDAD;
+DROP TABLE IF EXISTS ROL;
+
+
+DROP PROCEDURE IF EXISTS InsertarRol;
+DROP PROCEDURE IF EXISTS EliminarRol;
+DROP PROCEDURE IF EXISTS ActualizarRol;
+DROP PROCEDURE IF EXISTS DarDeBajaRol;
+
+-- === PERSONAL ===
+DROP PROCEDURE IF EXISTS insertarPersonal;
+DROP PROCEDURE IF EXISTS EliminarPersonal;
+DROP PROCEDURE IF EXISTS ActualizarPersonal;
+DROP PROCEDURE IF EXISTS DarDeBajaPersonal;
+
+-- === DOMICILIO ===
+DROP PROCEDURE IF EXISTS InsertarDomicilio;
+DROP PROCEDURE IF EXISTS EliminarDomicilio;
+DROP PROCEDURE IF EXISTS ActualizarDomicilio;
+
+CREATE TABLE PACIENTE (
+  id                  int(10) NOT NULL AUTO_INCREMENT, 
+  DNI                 char(8) NOT NULL, 
+  nombres             varchar(255) NOT NULL, 
+  ape_paterno         varchar(255) NOT NULL, 
+  ape_materno         varchar(255) NOT NULL, 
+  f_nacimiento        date NOT NULL, 
+  telefono            char(9) NOT NULL, 
+  email               varchar(255) NOT NULL, 
+  clave               varchar(255) NOT NULL, 
+  foto_perfil         varchar(255), 
+  nombre_emergencia   varchar(255), 
+  numero_emergencia   char(9), 
+  relacion_emergencia varchar(255), 
+  PRIMARY KEY (id));
+
+CREATE TABLE CONSULTORIO (
+  id              int(10) NOT NULL AUTO_INCREMENT, 
+  nombre          varchar(255) NOT NULL, 
+  estado          char(1) NOT NULL, 
+  id_centro_salud int(10) NOT NULL, 
+  PRIMARY KEY (id));
+
+CREATE TABLE PERSONAL (
+  id          int(10) NOT NULL AUTO_INCREMENT, 
+  DNI         char(8) NOT NULL, 
+  nombre      varchar(255) NOT NULL, 
+  ape_paterno varchar(255) NOT NULL, 
+  ape_materno varchar(255) NOT NULL, 
+  email       varchar(255) NOT NULL, 
+  clave       varchar(255) NOT NULL, 
+  foto_perfil varchar(255) NOT NULL, 
+  telefono    char(9) NOT NULL, 
+  ROLid       int(10) NOT NULL, 
+  estado      tinyint(3) NOT NULL, 
+  PRIMARY KEY (id));
+
+CREATE TABLE MEDICO (
+  id                   int(10) NOT NULL AUTO_INCREMENT, 
+  nombres              varchar(255) NOT NULL, 
+  ape_paterno          varchar(255) NOT NULL, 
+  ape_materno          varchar(255) NOT NULL, 
+  DNI                  char(8) NOT NULL UNIQUE, 
+  email                varchar(255) NOT NULL, 
+  telefono             char(9) NOT NULL, 
+  estado               char(1) NOT NULL, 
+  id_personal_validado int(10), 
+  PRIMARY KEY (id));
+
+CREATE TABLE ESPECIALIDAD (
+  id          int(10) NOT NULL AUTO_INCREMENT, 
+  nombre      varchar(255) NOT NULL, 
+  descripcion varchar(255), 
+  PRIMARY KEY (id));
+
+CREATE TABLE CENTRO_SALUD (
+  id        int(10) NOT NULL AUTO_INCREMENT, 
+  nombre    varchar(255) NOT NULL, 
+  direccion varchar(255) NOT NULL, 
+  telefono  char(9) NOT NULL, 
+  PRIMARY KEY (id));
+
+CREATE TABLE CITA (
+  id                  int(10) NOT NULL AUTO_INCREMENT, 
+  id_paciente         int(10) NOT NULL, 
+  tipo_atencion       char(1) NOT NULL comment 'P->Presencial
+D->Domicilio', 
+  direccion_domicilio varchar(255), 
+  estado              char(1) NOT NULL comment 'P-> Pendiente
 C->Cancelada
-A->Atendida', codigo_qr varchar(255) NOT NULL comment 'direccion de la imagen del codigo qr generado para una cita', fecha_creacion timestamp NOT NULL, TURNOid int(10) NOT NULL, PRIMARY KEY (id));
-CREATE TABLE CALIFICACION_CITA (id_cita int(10) NOT NULL, puntuacion int(10), comentarion text, fecha_creacion timestamp NULL, PRIMARY KEY (id_cita));
-CREATE TABLE CHAT (id int(10) NOT NULL AUTO_INCREMENT, id_paciente int(10) NOT NULL, id_medico int(10) NOT NULL, fecha_creacion int(10), PRIMARY KEY (id));
-CREATE TABLE MENSAJES_CHAT (id int(10), id_chat int(10) NOT NULL, id_emisor int(10), tipo_emisor int(10), contenido int(10), fecha_hora int(10), visto int(10), PRIMARY KEY (id));
-CREATE TABLE TIPO_NOTIFICACION (id int(10) NOT NULL AUTO_INCREMENT, nombre int(10), PRIMARY KEY (id));
-CREATE TABLE PROGRAMACION (id int(10) NOT NULL AUTO_INCREMENT, fecha_inicial int(10), fecha_final int(10), MEDICOid int(10) NOT NULL, CONSULTORIOid int(10) NOT NULL, ESPECIALIDADid int(10) NOT NULL, PRIMARY KEY (id));
-CREATE TABLE HORARIO (id int(10) NOT NULL AUTO_INCREMENT, hora_inicial time NOT NULL, hora_final time NOT NULL, dia_semana varchar(10) NOT NULL comment 'Lunes
+A->Atendida', 
+  codigo_qr           varchar(255) NOT NULL comment 'direccion de la imagen del codigo qr generado para una cita', 
+  fecha_creacion      timestamp NOT NULL, 
+  TURNOid             int(10) NOT NULL, 
+  PRIMARY KEY (id));
+
+CREATE TABLE CALIFICACION_CITA (
+  id_cita        int(10) NOT NULL, 
+  puntuacion     int(10), 
+  comentarion    text, 
+  fecha_creacion timestamp NULL, 
+  PRIMARY KEY (id_cita));
+
+CREATE TABLE PROGRAMACION (
+  id             int(10) NOT NULL AUTO_INCREMENT, 
+  fecha_inicial  int(10), 
+  fecha_final    int(10), 
+  MEDICOid       int(10) NOT NULL, 
+  CONSULTORIOid  int(10) NOT NULL, 
+  ESPECIALIDADid int(10) NOT NULL, 
+  PRIMARY KEY (id));
+
+CREATE TABLE HORARIO (
+  id             int(10) NOT NULL AUTO_INCREMENT, 
+  hora_inicial   time NOT NULL, 
+  hora_final     time NOT NULL, 
+  dia_semana     varchar(10) NOT NULL comment 'Lunes
 Martes
 Miercoles
 Jueves
 Viernes
 Sabado
-Domingo', PROGRAMACIONid int(10) NOT NULL, PRIMARY KEY (id));
-CREATE TABLE TURNO (id int(10) NOT NULL AUTO_INCREMENT, hora_inicio time NOT NULL, hora_fin time NOT NULL, estado char(1) NOT NULL comment 'D=Disponible
-O=Ocupado', HORARIOid int(10) NOT NULL, PRIMARY KEY (id));
-CREATE TABLE ROL (id int(10) NOT NULL AUTO_INCREMENT, nombre VARCHAR(255), PRIMARY KEY (id));
-CREATE TABLE DOMICILIO (id int(11) NOT NULL AUTO_INCREMENT, nombre varchar(255) NOT NULL, direccion varchar(255) NOT NULL, PACIENTEid int(10) NOT NULL, PRIMARY KEY (id));
-ALTER TABLE MENSAJES_CHAT ADD CONSTRAINT FKMENSAJES_C709446 FOREIGN KEY (id_chat) REFERENCES CHAT (id);
+Domingo', 
+  PROGRAMACIONid int(10) NOT NULL, 
+  PRIMARY KEY (id));
+
+CREATE TABLE TURNO (
+  id          int(10) NOT NULL AUTO_INCREMENT, 
+  hora_inicio time NOT NULL, 
+  hora_fin    time NOT NULL, 
+  estado      char(1) NOT NULL comment 'D=Disponible
+O=Ocupado', 
+  HORARIOid   int(10) NOT NULL, 
+  PRIMARY KEY (id));
+
+CREATE TABLE ROL (
+  id     int(10) NOT NULL AUTO_INCREMENT, 
+  nombre varchar(255) NOT NULL, 
+  PRIMARY KEY (id));
+
+CREATE TABLE DOMICILIO (
+  id         int(11) NOT NULL AUTO_INCREMENT, 
+  nombre     varchar(255) NOT NULL, 
+  direccion  varchar(255) NOT NULL, 
+  PACIENTEid int(10) NOT NULL, 
+  PRIMARY KEY (id));
+
 ALTER TABLE CITA ADD CONSTRAINT FKCITA698044 FOREIGN KEY (id_paciente) REFERENCES PACIENTE (id);
 ALTER TABLE CONSULTORIO ADD CONSTRAINT FKCONSULTORI355879 FOREIGN KEY (id_centro_salud) REFERENCES CENTRO_SALUD (id);
-ALTER TABLE NOTIFICACION ADD CONSTRAINT FKNOTIFICACI981960 FOREIGN KEY (id_tipo_notificacion) REFERENCES TIPO_NOTIFICACION (id);
 ALTER TABLE CALIFICACION_CITA ADD CONSTRAINT FKCALIFICACI795793 FOREIGN KEY (id_cita) REFERENCES CITA (id);
 ALTER TABLE PROGRAMACION ADD CONSTRAINT FKPROGRAMACI111763 FOREIGN KEY (MEDICOid) REFERENCES MEDICO (id);
 ALTER TABLE PROGRAMACION ADD CONSTRAINT FKPROGRAMACI440360 FOREIGN KEY (CONSULTORIOid) REFERENCES CONSULTORIO (id);
@@ -38,6 +167,17 @@ ALTER TABLE TURNO ADD CONSTRAINT FKTURNO475684 FOREIGN KEY (HORARIOid) REFERENCE
 ALTER TABLE CITA ADD CONSTRAINT FKCITA231288 FOREIGN KEY (TURNOid) REFERENCES TURNO (id);
 ALTER TABLE PERSONAL ADD CONSTRAINT FKPERSONAL35628 FOREIGN KEY (ROLid) REFERENCES ROL (id);
 ALTER TABLE DOMICILIO ADD CONSTRAINT FKDOMICILIO767250 FOREIGN KEY (PACIENTEid) REFERENCES PACIENTE (id);
+
+-- DATOS PRUEBA PERSONAL --
+
+INSERT INTO ROL (nombre) VALUES ('Administrador');
+INSERT INTO ROL (nombre) VALUES ('Supervisor');
+
+INSERT INTO PERSONAL (DNI, nombre, ape_paterno, ape_materno, email, clave, foto_perfil, telefono, ROLid, estado) VALUES 
+('74985581', 'Louis', 'Requejo', 'Chirinos', 'louis@ccss.com', '$argon2id$v=19$m=65536,t=3,p=4$DhuQucaekZr1yu11XfTSzQ$+72Neob1Licd0LMxPmTp9DdVMdVGbsNIwigVp73uIxo', 'foto1.jpg', '987654321', 1, TRUE);
+
+-- FIN DATOS PRUEBA PERSONAL --
+
 
 
 -- PA --
@@ -124,10 +264,10 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE EliminarPersonal(IN p_id INT)
 BEGIN
-    IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
+    IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE id = p_id) THEN
         SELECT 'El personal que intenta eliminar no existe' AS mensaje;
     ELSE
-        DELETE FROM PERSONAL WHERE ID = P_id;
+        DELETE FROM PERSONAL WHERE id = p_id;
         SELECT 'Personal eliminado correctamente' AS mensaje;
     END IF;
 END $$
@@ -150,19 +290,19 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
         SELECT 'El personal que intenta actualizar no existe' AS mensaje;
     ELSE
-        UPDATE PERSONAL SET DNI = p_DNI, NOMBRE = p_nombre, ape_paterno = p_ape_materno, ape_materno = p_ape_materno, email = p_email, clave = p_clave, foto_perfil = p_foto_perfil, telefono = p_telefono, ROLid = p_ROLid, estado = p_estado
+        UPDATE PERSONAL SET DNI = p_DNI, NOMBRE = p_nombre, ape_paterno = p_ape_paterno, ape_materno = p_ape_materno, email = p_email, clave = p_clave, foto_perfil = p_foto_perfil, telefono = p_telefono, ROLid = p_ROLid, estado = p_estado
         WHERE ID = p_id;
         SELECT 'El personal ha sido actualizado correctamente' AS mensaje;
     END IF;
 END $$
-DELIMITER;
+DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE DarDeBajaPersonal(IN p_id INT)
 BEGIN
     IF NOT EXISTS (SELECT 1 FROM PERSONAL WHERE ID = p_id) THEN
         SELECT 'El personal que intenta dar de baja no existe' AS mensaje;
-    ELSEIF (SELECT 1 FROM PERSONAL WHERE ID = p_id and estado = TRUE) THEN
+    ELSEIF (SELECT 1 FROM PERSONAL WHERE ID = p_id and estado = FALSE) THEN
         SELECT 'El personal ya se encuentra dado de baja' AS mensaje;
     ELSE
         UPDATE PERSONAL SET estado = FALSE WHERE ID = p_id;
@@ -210,4 +350,3 @@ DELIMITER ;
 
 
 -- Fin procedimientos almacenados para la tabla DOMICILIO --
-

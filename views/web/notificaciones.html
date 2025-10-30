@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}Notificaciones - Clínica Ham{% endblock %}
+
+{% block page_title %}Centro de Notificaciones{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/notificaciones.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+
+<div class="notifications-container">
+    
+    <div class="notifications-header">
+        <div class="header-icon">
+            <i class="fas fa-bell"></i>
+        </div>
+        <div class="header-content">
+            <h2>Tienes 3 notificaciones pendientes</h2>
+            <p>Mantente al día con las últimas actualizaciones del sistema</p>
+        </div>
+        <button class="btn btn-outline" id="markAllReadBtn">
+            <i class="fas fa-check-double"></i>
+            Marcar todo como leído
+        </button>
+    </div>
+    
+    <div class="notifications-filters">
+        <button class="filter-btn active" data-filter="all">
+            Todas
+            <span class="filter-count">12</span>
+        </button>
+        <button class="filter-btn" data-filter="unread">
+            Sin leer
+            <span class="filter-count">3</span>
+        </button>
+        <button class="filter-btn" data-filter="system">
+            Sistema
+            <span class="filter-count">4</span>
+        </button>
+        <button class="filter-btn" data-filter="appointments">
+            Citas
+            <span class="filter-count">5</span>
+        </button>
+        <button class="filter-btn" data-filter="doctors">
+            Médicos
+            <span class="filter-count">3</span>
+        </button>
+    </div>
+    
+    <div class="notifications-list">
+        
+        <div class="notification-item unread" data-type="appointments">
+            <div class="notification-icon success">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="notification-content">
+                <h4>Cita Confirmada</h4>
+                <p>El paciente Ana Torres ha confirmado su cita con Dr. Alejandro Gómez para el 20 de octubre a las 09:00.</p>
+                <span class="notification-time">Hace 5 minutos</span>
+            </div>
+            <div class="notification-actions">
+                <button class="btn-action" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action" title="Marcar como leída">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="btn-action btn-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="notification-item unread" data-type="appointments">
+            <div class="notification-icon warning">
+                <i class="fas fa-calendar-times"></i>
+            </div>
+            <div class="notification-content">
+                <h4>Cita Cancelada</h4>
+                <p>La cita #002 programada con Dra. María García ha sido cancelada por el paciente Luis Morales.</p>
+                <span class="notification-time">Hace 15 minutos</span>
+            </div>
+            <div class="notification-actions">
+                <button class="btn-action" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action" title="Marcar como leída">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="btn-action btn-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="notification-item unread" data-type="system">
+            <div class="notification-icon info">
+                <i class="fas fa-cog"></i>
+            </div>
+            <div class="notification-content">
+                <h4>Actualización del Sistema</h4>
+                <p>El sistema se actualizará esta noche a las 02:00 AM. El servicio estará interrumpido por aproximadamente 30 minutos.</p>
+                <span class="notification-time">Hace 1 hora</span>
+            </div>
+            <div class="notification-actions">
+                <button class="btn-action" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action" title="Marcar como leída">
+                    <i class="fas fa-check"></i>
+                </button>
+                <button class="btn-action btn-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="notification-item" data-type="doctors">
+            <div class="notification-icon primary">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div class="notification-content">
+                <h4>Nuevo Reporte Generado</h4>
+                <p>El reporte mensual de octubre ha sido generado y está listo para descargar.</p>
+                <span class="notification-time">Hace 2 horas</span>
+            </div>
+            <div class="notification-actions">
+                <button class="btn-action" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action btn-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="notification-item" data-type="appointments">
+            <div class="notification-icon danger">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="notification-content">
+                <h4>Cita Urgente Solicitada</h4>
+                <p>Paciente Carmen Ruiz solicita cita urgente con Dr. Carlos Martínez por dolor agudo.</p>
+                <span class="notification-time">Hace 3 horas</span>
+            </div>
+            <div class="notification-actions">
+                <button class="btn-action" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action btn-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="notification-item" data-type="doctors">
+            <div class="notification-icon success">
+                <i class="fas fa-user-check"></i>
+            </div>
+            <div class="notification-content">
+                <h4>Médico Validado</h4>
+                <p>Las credenciales del Dr. Luis Rodríguez han sido validadas exitosamente.</p>
+                <span class="notification-time">Hace 5 horas</span>
+            </div>
+            <div class="notification-actions">
+                <button class="btn-action" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action btn-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="notification-item" data-type="system">
+            <div class="notification-icon info">
+                <i class="fas fa-database"></i>
+            </div>
+            <div class="notification-content">
+                <h4>Backup Completado</h4>
+                <p>El backup automático de la base de datos se ha completado exitosamente.</p>
+                <span class="notification-time">Hace 1 día</span>
+            </div>
+            <div class="notification-actions">
+                <button class="btn-action" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action btn-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="notification-item" data-type="appointments">
+            <div class="notification-icon success">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="notification-content">
+                <h4>Cita Completada</h4>
+                <p>La cita de Pedro Sánchez con Dr. Luis Rodríguez ha sido completada.</p>
+                <span class="notification-time">Hace 1 día</span>
+            </div>
+            <div class="notification-actions">
+                <button class="btn-action" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action btn-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="notification-item" data-type="doctors">
+            <div class="notification-icon warning">
+                <i class="fas fa-user-clock"></i>
+            </div>
+            <div class="notification-content">
+                <h4>Disponibilidad Actualizada</h4>
+                <p>Dra. Sofía Hernández ha actualizado su horario de disponibilidad para la próxima semana.</p>
+                <span class="notification-time">Hace 2 días</span>
+            </div>
+            <div class="notification-actions">
+                <button class="btn-action" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action btn-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="notification-item" data-type="system">
+            <div class="notification-icon info">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="notification-content">
+                <h4>Nueva Funcionalidad Disponible</h4>
+                <p>Ahora puedes exportar reportes directamente a formato PDF desde la sección de reportes.</p>
+                <span class="notification-time">Hace 3 días</span>
+            </div>
+            <div class="notification-actions">
+                <button class="btn-action" title="Ver detalles">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action btn-danger" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class="load-more">
+        <button class="btn btn-outline" id="loadMoreBtn">
+            <i class="fas fa-sync-alt"></i>
+            Cargar más notificaciones
+        </button>
+    </div>
+    
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/notificaciones.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Centro de Salud{% endblock %}
+
+{% block page_title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<div class="welcome-section">
+    <h2>Bienvenido, Administrador</h2>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <span>👨‍⚕️</span>
+        </div>
+        <div class="stat-content">
+            <h3>Médicos Activos</h3>
+            <p class="stat-number">24</p>
+            <p class="stat-detail">en el último mes</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <span>📋</span>
+        </div>
+        <div class="stat-content">
+            <h3>Citas Pendientes</h3>
+            <p class="stat-number">15</p>
+            <p class="stat-detail">para esta semana</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon yellow">
+            <span>🔔</span>
+        </div>
+        <div class="stat-content">
+            <h3>Notificaciones Urgentes</h3>
+            <p class="stat-number">3</p>
+            <p class="stat-detail">requieren atención</p>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-icon purple">
+            <span>📊</span>
+        </div>
+        <div class="stat-content">
+            <h3>Reportes Generados</h3>
+            <p class="stat-number">8</p>
+            <p class="stat-detail">en el último día</p>
+        </div>
+    </div>
+</div>
+
+<div class="two-column-layout">
+
+    <div class="left-column">
+
+        <div class="card">
+            <h3>Acciones Rápidas</h3>
+            <div class="actions-list">
+                <a href="#" class="action-item">
+                    <div class="action-icon">
+                        <span>✅</span>
+                    </div>
+                    <div class="action-content">
+                        <h4>Validar Credenciales Médicas</h4>
+                        <p>Revisa y aprueba la documentación de nuevos médicos.</p>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+
+                <a href="#" class="action-item">
+                    <div class="action-icon">
+                        <span>📅</span>
+                    </div>
+                    <div class="action-content">
+                        <h4>Programar Cita de Seguimiento</h4>
+                        <p>Gestiona y asigna citas de pacientes pendientes.</p>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+
+                <a href="#" class="action-item">
+                    <div class="action-icon">
+                        <span>🔔</span>
+                    </div>
+                    <div class="action-content">
+                        <h4>Revisar Notificaciones Recientes</h4>
+                        <p>Accede a la bandeja de entrada para nuevos mensajes y alertas.</p>
+                    </div>
+                    <span class="arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>Citas Atendidas y Nuevos Pacientes</h3>
+            <p class="chart-subtitle">Últimos 7 días</p>
+            <canvas id="citasChart"></canvas>
+        </div>
+
+    </div>
+
+    <div class="right-column">
+
+        <div class="card">
+            <h3>Actividad Reciente</h3>
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon">👤</div>
+                    <div class="activity-content">
+                        <h4>Dr. Alejandro Gómez actualizó su perfil</h4>
+                        <p class="activity-time">Hace 5 minutos</p>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">🏥</div>
+                    <div class="activity-content">
+                        <h4>Nueva solicitud de cita del paciente Ana Torres</h4>
+                        <p class="activity-time">Hace 10 minutos</p>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">📊</div>
+                    <div class="activity-content">
+                        <h4>Reporte de Citas Mensuales generado</h4>
+                        <p class="activity-time">Hace 25 minutos</p>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">💾</div>
+                    <div class="activity-content">
+                        <h4>Notificación de sistema: Backup completado</h4>
+                        <p class="activity-time">Hace 1 hora</p>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon">👩‍⚕️</div>
+                    <div class="activity-content">
+                        <h4>Dra. Laura Pérez ha confirmado su disponibilidad</h4>
+                        <p class="activity-time">Hace 2 horas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

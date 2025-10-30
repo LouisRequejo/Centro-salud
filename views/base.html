@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Centro de Salud{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <aside class="sidebar">
+        <div class="logo">
+            <h2>✱ Clínica Ham</h2>
+        </div>
+        <nav class="nav-menu">
+            <a href="{{ url_for('dashboard') }}" class="nav-item {% if active_page == 'dashboard' %}active{% endif %}">
+                <span class="icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="{{ url_for('gestionar_medicos') }}"
+                class="nav-item {% if active_page == 'medicos' %}active{% endif %}">
+                <span class="icon">👨‍⚕️</span>
+                <span>Gestionar Médicos</span>
+            </a>
+            <a href="{{ url_for('gestionar_agendas') }}"
+                class="nav-item {% if active_page == 'agendas' %}active{% endif %}">
+                <span class="icon">📅</span>
+                <span>Gestionar Agendas</span>
+            </a>
+            <a href="{{ url_for('reportes') }}" class="nav-item {% if active_page == 'reportes' %}active{% endif %}">
+                <span class="icon">📈</span>
+                <span>Reportes</span>
+            </a>
+            <a href="{{ url_for('gestionar_sedes') }}" class="nav-item {% if active_page == 'sedes' %}active{% endif %}">
+                <span class="icon">📍</span>
+                <span>Sedes</span>
+            </a>
+            <a href="{{ url_for('notificaciones') }}"
+                class="nav-item {% if active_page == 'notificaciones' %}active{% endif %}">
+                <span class="icon">🔔</span>
+                <span>Notificaciones</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <a href="{{ url_for('perfil') }}" class="nav-item {% if active_page == 'perfil' %}active{% endif %}">
+                <span class="icon">⚙️</span>
+                <span>Perfil y Configuración</span>
+            </a>
+            <a href="{{ url_for('home') }}" class="nav-item">
+                <span class="icon">🚪</span>
+                <span>Cerrar Sesión</span>
+            </a>
+        </div>
+
+    </aside>
+
+    <div class="main-content">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" id="menuToggle">☰</button>
+                <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+            </div>
+            <div class="topbar-right">
+                <span class="user-name">Admin Centro</span>
+                <div class="user-avatar">
+                    <img src="https://ui-avatars.com/api/?name=Admin+Centro&background=1976d2&color=fff" alt="Usuario">
+                </div>
+            </div>
+        </header>
+
+        <div class="content-area">
+            {% block content %}{% endblock %}
+        </div>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    {% block extra_js %}{% endblock %}
+    <script src="{{ url_for('static', filename='js/base.js') }}"></script>
+</body>
+
+</html>

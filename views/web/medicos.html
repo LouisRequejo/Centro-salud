@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Gestión de Médicos - Clínica Ham{% endblock %}
+
+{% block page_title %}Gestión de Médicos{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/medicos.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="filter-bar">
+    <div class="search-box-inline">
+        <i class="fas fa-search"></i>
+        <input type="text" placeholder="Buscar médicos..." id="searchInput">
+    </div>
+    <div class="filter-tags">
+        <button class="filter-tag active" data-specialty="all">
+            Todas las Especialidades
+        </button>
+        <button class="filter-tag" data-specialty="cardiologia">
+            <i class="fas fa-heart"></i>
+            Cardiología
+        </button>
+        <button class="filter-tag" data-specialty="pediatria">
+            <i class="fas fa-baby"></i>
+            Pediatría
+        </button>
+        <button class="filter-tag" data-specialty="medicina-general">
+            <i class="fas fa-stethoscope"></i>
+            Medicina General
+        </button>
+        <button class="filter-tag" data-specialty="traumatologia">
+            <i class="fas fa-bone"></i>
+            Traumatología
+        </button>
+    </div>
+    <div class="filter-actions">
+        <select class="filter-select" id="statusFilter">
+            <option value="all">Todos los Estados</option>
+            <option value="validado">Validado</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="no-validado">No Validado</option>
+        </select>
+        <button class="btn btn-primary" id="addDoctorBtn">
+            <i class="fas fa-plus"></i>
+            Agregar Médico
+        </button>
+    </div>
+</div>
+
+<div id="loading-indicator" class="loading">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Cargando médicos...</p>
+</div>
+
+<div id="error-message" class="error-message" style="display: none;">
+    <i class="fas fa-exclamation-circle"></i>
+    <p id="error-text"></p>
+    <button class="btn btn-secondary" id="retryBtn">Reintentar</button>
+</div>
+
+<div class="doctors-grid" id="doctorsGrid">
+    <!-- Los médicos se cargarán dinámicamente aquí -->
+</div>
+
+<div class="pagination" id="pagination">
+    <button class="pagination-btn" id="prevPage">
+        <i class="fas fa-chevron-left"></i>
+        Anterior
+    </button>
+    <div class="pagination-numbers" id="pageNumbers"></div>
+    <button class="pagination-btn" id="nextPage">
+        Siguiente
+        <i class="fas fa-chevron-right"></i>
+    </button>
+</div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/medicos.js') }}"></script>
+{% endblock %}
+

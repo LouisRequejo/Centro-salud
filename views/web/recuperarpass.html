@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recuperar Contraseña - Centro de Salud</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/recuperarpass.css') }}">
+</head>
+<body>
+    
+    <form action="{{ url_for('recuperar_password') }}" method="POST">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Centro de Salud">
+        <h1>Recuperar Contraseña</h1>
+        <h3>Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña</h3>
+
+        <span>Correo electrónico</span>
+        <input type="email" name="email" id="email" placeholder="admin@centro-salud.com" required>
+        
+        <button type="submit">Enviar enlace de recuperación</button>
+        
+        <a href="{{ url_for('home') }}" class="volver-login">Volver al inicio de sesión</a>
+    </form>
+
+</body>
+</html>

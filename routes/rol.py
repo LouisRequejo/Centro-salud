@@ -25,7 +25,7 @@ def crear_rol():
     ok = mensaje.lower().startswith('rol insertado')
     return jsonify({'data': None, 'status': ok, 'message': mensaje}), 200 if ok else 409
 
-@ws_rol.route('/rol/<int:rol_id>', methods=['DELETE'])
+@ws_rol.route('/rol/eliminar/<int:rol_id>', methods=['DELETE'])
 def eliminar_rol(rol_id):
     mensaje = rol.eliminar(rol_id)
     if mensaje is None:
@@ -72,3 +72,10 @@ def dar_baja_rol(rol_id):
     if low == 'el rol no existe':
         return jsonify({'data': None, 'status': False, 'message': mensaje}), 404
     return jsonify({'data': None, 'status': False, 'message': mensaje}), 400
+
+@ws_rol.route('/roles', methods=['GET'])
+def listar_roles():
+    roles = rol.listar()
+    if roles is None:
+        return jsonify({'data': None, 'status': False, 'message': 'Error al obtener los roles'}), 500
+    return jsonify({'data': roles, 'status': True, 'message': 'Roles obtenidos correctamente'}), 200

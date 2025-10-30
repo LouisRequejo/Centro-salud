@@ -2,7 +2,7 @@ import jwt
 from datetime import datetime, timedelta
 from config import Config
 
-def generar_token(payload, exp_seconds=10):
+def generar_token(payload, exp_seconds=86400):  # 24 horas por defecto
     payload['exp'] = datetime.utcnow() + timedelta(seconds=exp_seconds)
     token = jwt.encode(payload, Config.SECRET_KEY, algorithm="HS256")
     return token

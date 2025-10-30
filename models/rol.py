@@ -86,7 +86,7 @@ class Rol:
         cursor = None
         try:
             con = Conexion().open
-            cursor = con.cursor
+            cursor = con.cursor()
 
             sql = "CALL ActualizarRol(%s, %s)"
             cursor.execute(sql, (rol_id, nombre))
@@ -151,3 +151,26 @@ class Rol:
                 cursor.close()
             if con:
                 con.close()       
+
+    def listar(self):
+        con = None
+        cursor = None
+        try:
+                con = Conexion().open
+                cursor = con.cursor()
+
+                sql = "SELECT id, nombre FROM ROL"
+                cursor.execute(sql)
+
+                rows = cursor.fetchall()
+                roles = [{'id': row['id'], 'nombre': row['nombre']} for row in rows]
+
+                return roles
+        except Exception as e:
+                print("ERROR listar():", e)
+                return None
+        finally:
+                            if cursor:
+                                cursor.close()
+                            if con:
+                                con.close()

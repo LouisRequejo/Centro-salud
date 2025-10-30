@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro de Salud - Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="{{ url_for('static', filename='js/login.js') }}" defer></script>
+</head>
+<body>
+    
+    <form id="loginForm">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Centro de Salud">
+        <h1>Centro de Salud</h1>
+        <h3>Accede a tu cuenta de administrador</h3>
+
+        <div id="mensaje" class="mensaje" style="display: none;"></div>
+
+        <span>Correo electrónico</span>
+        <input type="email" name="email" id="email" placeholder="admin@centro-salud.com" required><br>
+        <span>Contraseña</span>
+        <input type="password" name="password" id="password" placeholder="********" required>
+        <a href="{{ url_for('recuperar_password') }}" id="olvidar">¿Olvidaste tu contraseña?</a>
+        <button type="submit" id="btnLogin">Iniciar Sesión</button>
+    </form>
+
+</body>
+</html>
