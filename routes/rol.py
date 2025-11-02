@@ -10,11 +10,9 @@ rol = Rol()
 def crear_rol():
     data = request.get_json(silent=True) or {}
     nombre = data.get('nombre')
-
     if not nombre:
         return jsonify({'data': None, 'status': False,
                         'message': 'Debe completar todos los campos'}), 400
-
     mensaje = rol.registrar(nombre)
 
     if mensaje is None:
