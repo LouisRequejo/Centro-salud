@@ -14,21 +14,23 @@ DELETE FROM PERSONAL;
 DELETE FROM ROL;
 
 -- INSERTAR ROLES
-INSERT INTO ROL (nombre) VALUES
-('Administrador'),
-('Supervisor'),
-('Recepcionista'),
-('Enfermero'),
-('Contador');
+INSERT INTO ROL (nombre, estado) VALUES
+('Administrador', 'A'),
+('Supervisor', 'A'),
+('Recepcionista', 'A'),
+('Enfermero', 'A'),
+('Contador', 'A');
 
 -- INSERTAR PERSONAL
-INSERT INTO PERSONAL (DNI, nombre, ape_paterno, ape_materno, email, clave, foto_perfil, telefono, ROLid) VALUES
-('74985581', 'Louis', 'Requejo', 'Chirinos', 'louis@ccss.com', 'usat', 'foto1.jpg', '987654321', 1),
-('45678912', 'María', 'García', 'López', 'maria.garcia@clinicaham.com', 'usat', 'foto_maria.jpg', '987123456', 2),
-('78945612', 'Carlos', 'Martínez', 'Ruiz', 'carlos.martinez@clinicaham.com', 'usat', 'foto_carlos.jpg', '987456123', 1),
-('65432178', 'Ana', 'López', 'Fernández', 'ana.lopez@clinicaham.com', 'usat', 'foto_ana.jpg', '987789456', 3),
-('12345678', 'Roberto', 'Díaz', 'Morales', 'roberto.diaz@clinicaham.com', 'usat', 'foto_roberto.jpg', '987321654', 4),
-('98765432', 'Sofía', 'Hernández', 'Castro', 'sofia.hernandez@clinicaham.com', 'usat', 'foto_sofia.jpg', '987654987', 5);
+INSERT INTO PERSONAL 
+(DNI, nombre, ape_paterno, ape_materno, email, clave, foto_perfil, telefono, estado, ROLid) 
+VALUES
+('74985581', 'Louis', 'Requejo', 'Chirinos', 'louis@ccss.com', 'usat', 'foto1.jpg', '987654321', 'A', 1),
+('45678912', 'María', 'García', 'López', 'maria.garcia@clinicaham.com', 'usat', 'foto_maria.jpg', '987123456', 'A', 2),
+('78945612', 'Carlos', 'Martínez', 'Ruiz', 'carlos.martinez@clinicaham.com', 'usat', 'foto_carlos.jpg', '987456123', 'A', 1),
+('65432178', 'Ana', 'López', 'Fernández', 'ana.lopez@clinicaham.com', 'usat', 'foto_ana.jpg', '987789456', 'A', 3),
+('12345678', 'Roberto', 'Díaz', 'Morales', 'roberto.diaz@clinicaham.com', 'usat', 'foto_roberto.jpg', '987321654', 'A', 4),
+('98765432', 'Sofía', 'Hernández', 'Castro', 'sofia.hernandez@clinicaham.com', 'usat', 'foto_sofia.jpg', '987654987', 'A', 5);
 
 -- INSERTAR ESPECIALIDADES
 INSERT INTO ESPECIALIDAD (nombre, estado, descripcion) VALUES
@@ -85,11 +87,12 @@ INSERT INTO PACIENTE (DNI, nombres, ape_paterno, ape_materno, f_nacimiento, tele
 ('50345678', 'Carmen Rosa', 'Ruiz', 'Paredes', '1992-03-10', '987300001', 'carmen.ruiz@email.com', 'usat', 'foto_paciente3.jpg', 'José Ruiz', '987300002', 'Padre');
 
 -- INSERTAR DOMICILIOS
-INSERT INTO DOMICILIO (nombre, direccion, estado, PACIENTEid) VALUES
-('Casa', 'Calle 45 # 23-12, Bogotá', 'A', 1),
-('Trabajo', 'Carrera 7 # 80-50, Bogotá', 'A', 1),
-('Casa', 'Calle 100 # 15-20, Bogotá', 'A', 2),
-('Casa', 'Avenida 68 # 45-30, Bogotá', 'A', 3);
+INSERT INTO DOMICILIO (nombre, direccion, estado, latitud, longitud, PACIENTEid) VALUES
+('Casa', 'Calle 45 # 23-12, Bogotá', 'A', NULL, NULL, 1),
+('Trabajo', 'Carrera 7 # 80-50, Bogotá', 'A', NULL, NULL, 1),
+('Casa', 'Calle 100 # 15-20, Bogotá', 'A', NULL, NULL, 2),
+('Casa', 'Avenida 68 # 45-30, Bogotá', 'A', NULL, NULL, 3);
+
 
 -- INSERTAR PROGRAMACION
 INSERT INTO PROGRAMACION (fecha_inicial, fecha_final, estado, MEDICOid, CONSULTORIOid, ESPECIALIDADid) VALUES
