@@ -1,3 +1,5 @@
 .venv/
 __pycache__/
 *.pyc
+routes/__pycache__/
+models/__pycache__/

@@ -5,6 +5,7 @@ from routes.medico import ws_medico
 from routes.especialidad import ws_especialidad
 from routes.domicilio import ws_domicilio
 from routes.personal import ws_personal
+from routes.programacion import ws_programacion
 
 app = Flask(__name__, template_folder='views')
 app.register_blueprint(ws_rol, url_prefix='/rol')
@@ -12,6 +13,7 @@ app.register_blueprint(ws_medico, url_prefix='/medico')
 app.register_blueprint(ws_especialidad, url_prefix='/especialidad')
 app.register_blueprint(ws_domicilio, url_prefix='/domicilio')
 app.register_blueprint(ws_personal, url_prefix='/personal')
+app.register_blueprint(ws_programacion, url_prefix='/programacion')
 
 @app.route('/')
 def home():
