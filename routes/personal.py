@@ -116,7 +116,7 @@ def dar_baja_personal(personal_id):
         return _resp(None, False, mensaje, 404)
     return _resp(None, False, mensaje, 400)
 
-@ws_personal.route('/login', methods=['POST'])
+@ws_personal.route('/loginPersonal', methods=['POST'])
 def login_personal():
     try:
         data = request.get_json(silent=True) or {}
