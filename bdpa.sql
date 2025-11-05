@@ -134,37 +134,108 @@ DELIMITER ;
 -- Procedimientos almacenados para la tabla DOMICILO --
 
 DELIMITER $$
-CREATE PROCEDURE InsertarDomicilio(IN p_nombre VARCHAR(255), p_direccion varchar(255), p_paciente_id INT)
+
+CREATE PROCEDURE paInsertarDomicilio (
+    IN v_nombre VARCHAR(255),
+    IN v_direccion VARCHAR(255),
+    IN v_latitud DOUBLE,
+    IN v_longitud DOUBLE,
+    IN v_PACIENTEid INT,
+    OUT resultado INT
+)
 BEGIN
-    IF EXISTS (SELECT 1 FROM DOMICILIO WHERE direccion = p_direccion and PACIENTEid = p_paciente_id ) THEN
-        SELECT 'El Este domicilio ya ha sido registrado anteriormente' AS mensaje;
-    ELSE
-        INSERT INTO DOMICILIO (nombre, direccion, PACIENTEid) VALUES (p_nombre, p_direccion,p_paciente_id);
-        SELECT 'Domicilio insertado correctamente' AS mensaje;
-    END IF;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN 
+        SET resultado = 0;
+    END;
+
+    INSERT INTO Domicilio(nombre, direccion, estado, latitud, longitud, PACIENTEid)
+    VALUES (v_nombre, v_direccion, 'A', v_latitud, v_longitud, v_PACIENTEid);
+
+    SET resultado = 1;
 END $$
+
+DELIMITER ;
+
+
+DELIMITER $$
+
+CREATE PROCEDURE PaModificarDomicilio (
+    in v_id INT,
+    IN v_nombre VARCHAR(255),
+    IN v_direccion VARCHAR(255),
+    IN v_latitud DOUBLE,
+    IN v_longitud DOUBLE,
+    IN v_PACIENTEid INT,
+    OUT resultado INT
+)
+
+BEGIN
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN 
+        SET resultado = 0;
+    END;
+
+    update domicilio 
+    SET nombre = v_nombre,
+        direccion = v_direccion,
+        latitud = v_latitud,
+        longitud = v_longitud,
+        PACIENTEid = v_PACIENTEid
+    where v_id = id;
+    set resultado = 1;
+END $$
+
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE EliminarDomicilio(IN p_docimicilio INT)
+
+CREATE PROCEDURE paEliminarDomicilio(
+    IN v_id INT,
+    OUT resultado INT
+)
 BEGIN
-        DELETE FROM DOMICILIO WHERE id = p_docimicilio;
-        SELECT 'Domicilio eliminado correctamente' AS mensaje;
+	 DECLARE v_existe INT DEFAULT 0;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN 
+        SET resultado = 0;
+    END;
+
+    SELECT COUNT(*) INTO v_existe 
+    FROM domicilio
+    WHERE id = v_id;
+
+    IF v_existe > 0 THEN
+        DELETE FROM domicilio
+        WHERE id = v_id;
+        SET resultado = 1; 
+    ELSE
+        SET resultado = -1; 
+    END IF;
 
 END $$
+
 DELIMITER ;
+
 
 DELIMITER $$
-CREATE PROCEDURE ActualizarDomicilio(IN p_id INT, IN p_nombre VARCHAR(255),  p_direccion varchar(255) )
+CREATE PROCEDURE paActualizarEstadoDomicilio(
+    in v_id INT,
+    OUT resultado int
+)
+
 BEGIN
-    IF EXISTS (SELECT 1 FROM DOMICILIO WHERE id = p_id) THEN
-        UPDATE DOMICILIO SET nombre = p_nombre, direccion = p_direccion WHERE id = p_id;
-        SELECT 'Domicilio actualizado correctamente' AS mensaje;
-    ELSE
-        SELECT 'El domicilio no existe' AS mensaje;
-    END IF;
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN 
+        SET resultado = 0;
+    END;
+    
+    UPDATE domicilio SET estado = 'I'
+	 WHERE v_id = id;
+    SET resultado = 1;
 END $$
-DELIMITER ;
+DELIMITER ; 
+
 
 
 -- Fin procedimientos almacenados para la tabla DOMICILIO --
