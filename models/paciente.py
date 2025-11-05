@@ -1,4 +1,4 @@
-# models/personal.py
+# models/paciente.py
 from conexionBD import Conexion
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
@@ -7,22 +7,18 @@ class Paciente:
     def __init__(self):
         self.ph = PasswordHasher()
 
-def login(self, email, clave):
+    def login(self, email, clave):
         con = None
         cursor = None
         try:
             con = Conexion().open
             cursor = con.cursor()
-            sql = "SELECT id, concat(nombre, ' ', ape_paterno, ' ', ape_materno) as nombre, email, clave, estado FROM PACIENTE WHERE email = %s"
+            sql = "SELECT id, concat(nombres, ' ', ape_paterno, ' ', ape_materno) as nombre, email, clave FROM PACIENTE WHERE email = %s"
             cursor.execute(sql, (email,))
             
             result = cursor.fetchone()
             
             if result:
-                # Verificar si el usuario está activo
-                if result['estado'] == 0:
-                    return None
-                
                 # Verificar la contraseña
                 try:
                     self.ph.verify(result['clave'], clave)
