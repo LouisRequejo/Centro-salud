@@ -9,6 +9,16 @@ paciente = Paciente()
 def _resp(data=None, ok=True, message='', code=200):
     return jsonify({'data': data, 'status': ok, 'message': message}), code
 
+@ws_paciente.route('/listar', methods=['GET'])
+def listar_pacientes():
+    """Endpoint temporal para ver qué pacientes existen en la BD"""
+    try:
+        pacientes = paciente.listar_todos()
+        return _resp(pacientes, True, f'Se encontraron {len(pacientes)} pacientes', 200)
+    except Exception as e:
+        print(f"Error al listar pacientes: {e}")
+        return _resp(None, False, 'Error al obtener pacientes', 500)
+
 @ws_paciente.route('/login', methods=['POST'])
 def login_paciente():
     try:

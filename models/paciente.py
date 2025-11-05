@@ -7,6 +7,41 @@ class Paciente:
     def __init__(self):
         self.ph = PasswordHasher()
 
+    def listar_todos(self):
+        """Lista todos los pacientes con su información básica"""
+        con = None
+        cursor = None
+        try:
+            con = Conexion().open
+            cursor = con.cursor()
+            
+            sql = """
+            SELECT 
+                id, 
+                DNI,
+                concat(nombres, ' ', ape_paterno, ' ', ape_materno) as nombre_completo,
+                nombres,
+                ape_paterno,
+                ape_materno,
+                email,
+                telefono,
+                f_nacimiento
+            FROM PACIENTE
+            ORDER BY nombres, ape_paterno
+            """
+            cursor.execute(sql)
+            resultado = cursor.fetchall()
+            
+            return resultado
+        except Exception as e:
+            print(f"Error al listar pacientes: {e}")
+            return []
+        finally:
+            if cursor:
+                cursor.close()
+            if con:
+                con.close()
+
     def login(self, email, clave):
         print("=" * 60)
         print("[DEBUG] ========== INICIO LOGIN PACIENTE ==========")
