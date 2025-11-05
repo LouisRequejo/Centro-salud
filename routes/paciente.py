@@ -15,7 +15,7 @@ def login_paciente():
         data = request.get_json(silent=True) or {}
 
         email = data.get('email', '').strip()
-        password = data.get('password', '').strip()
+        password = data.get('clave', '').strip()
 
         if not email or not password:
             return _resp(None, False, 'Email y contraseña son requeridos', 400)
@@ -38,8 +38,7 @@ def login_paciente():
                     'id': usuario.get('id'),
                     'nombre': usuario.get('nombre'),
                     'email': usuario.get('email')
-                },
-                'redirect': '/dashboard'
+                }
             }), 200
         else:
             return _resp(None, False, 'Correo o contraseña incorrectos', 401)
