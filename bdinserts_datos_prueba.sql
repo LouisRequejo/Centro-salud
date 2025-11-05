@@ -101,20 +101,21 @@ INSERT INTO PROGRAMACION (fecha_inicial, fecha_final, estado, MEDICOid, CONSULTO
 ('2025-10-01', '2025-12-31', 'A', 3, 3, 3);
 
 -- INSERTAR HORARIOS
-INSERT INTO HORARIO (hora_inicial, hora_final, dia_semana, estado, PROGRAMACIONid) VALUES
-('08:00:00', '12:00:00', 'Lunes', 'A', 1),
-('08:00:00', '12:00:00', 'Martes', 'A', 1),
-('09:00:00', '13:00:00', 'Lunes', 'A', 2),
-('09:00:00', '13:00:00', 'Martes', 'A', 2),
-('10:00:00', '14:00:00', 'Miércoles', 'A', 3);
+INSERT INTO HORARIO (hora_inicial, hora_final, dia_semana, fecha, estado, PROGRAMACIONid) VALUES
+('08:00:00', '12:00:00', 'Lunes', '2025-11-04', 'A', 1),
+('08:00:00', '12:00:00', 'Martes', '2025-11-05', 'A', 1),
+('09:00:00', '13:00:00', 'Lunes', '2025-11-04', 'A', 2),
+('09:00:00', '13:00:00', 'Martes', '2025-11-05', 'A', 2),
+('10:00:00', '14:00:00', 'Miércoles', '2025-11-06', 'A', 3);
 
 -- INSERTAR TURNOS
 INSERT INTO TURNO (hora_inicio, hora_fin, estado, HORARIOid) VALUES
-('08:00:00', '08:30:00', 'A', 1),
-('08:30:00', '09:00:00', 'A', 1),
-('09:00:00', '09:30:00', 'A', 2),
-('09:30:00', '10:00:00', 'A', 2),
-('10:00:00', '10:30:00', 'A', 3);
+('08:00:00', '08:30:00', 'D', 1),
+('08:30:00', '09:00:00', 'D', 1),
+('09:00:00', '09:30:00', 'D', 2),
+('09:30:00', '10:00:00', 'D', 2),
+('10:00:00', '10:30:00', 'D', 3);
+
 
 -- INSERTAR CITAS COMPLETAS
 INSERT INTO CITA (id_paciente, tipo_atencion, direccion_domicilio, estado, codigo_qr, fecha_creacion, TURNOid) VALUES
