@@ -6,3 +6,4 @@ routes/__pycache__/
 models/__pycache__/
 *.bak_*
 *.vpp.bak_*
+*.lck
