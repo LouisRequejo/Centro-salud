@@ -91,3 +91,25 @@ def darbaja():
             return jsonify({'status': False, 'data': None, 'message': 'Ocurrió un error al dar de baja la especialidad'}), 500
     except Exception as e:
         return jsonify({'status': False, 'data': None, 'message': str(e)}), 500
+    
+@ws_especialidad.route('/listar', methods=['GET'])
+def listar():
+    try:
+        result = especialidad.listar()
+        return jsonify({'status': True, 'data': result, 'message': 'Especialidades obtenidas correctamente'}), 200
+    except Exception as e:
+        return jsonify({'status': False, 'data': None, 'message': str(e)}), 500
+    
+@ws_especialidad.route('/listarMedicoEP', methods=['POST'])
+def listarMedicoEP():
+    data = request.get_json()
+    especialidadId = data.get('especialidadId')
+
+    if not especialidadId:
+        return jsonify({'status': False, 'data': None, 'message': 'Falta el ID de la especialidad'}), 400
+    try:
+        result = especialidad.listadoMedicosPorEspecialidad(especialidadId)
+        return jsonify({'status': True, 'data': result, 'message': 'Médicos obtenidos correctamente'}), 200
+    except Exception as e:
+        return jsonify({'status': False, 'data': None, 'message': str(e)}), 500
+    

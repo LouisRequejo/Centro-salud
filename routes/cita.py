@@ -21,6 +21,6 @@ def reservar_cita():
     exito, resultado = Cita.reservar_cita(paciente_id, tipo_atencion, direccion_domicilio, turno_id)
 
     if exito:
-        return jsonify({"data": {"message": "Cita reservada con éxito", "cita_id": resultado}, "status": True}), 201
+        return jsonify({"data": None, "status": True, "message": f"Cita reservada con éxito, número de cita:  {resultado}"}), 201
     else:
         return jsonify({"data": None, "status": False, "message": resultado}), 400

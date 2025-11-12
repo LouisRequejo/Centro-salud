@@ -130,7 +130,13 @@ class Cita:
                     CONCAT(p_pac.nombres, ' ', p_pac.ape_paterno, ' ', p_pac.ape_materno) as paciente_completo,
                     p_pac.DNI as paciente_dni,
                     p_pac.email as paciente_email,
-                    p_pac.telefono as paciente_telefono
+                    p_pac.telefono as paciente_telefono,
+                    cons.id as consultorio_id,
+                    cons.nombre as consultorio_nombre,
+                    cs.id as centro_salud_id,
+                    cs.nombre as centro_salud_nombre,
+                    cs.direccion as centro_salud_direccion,
+                    cs.telefono as centro_salud_telefono
                 FROM CITA c
                 INNER JOIN TURNO t ON c.TURNOid = t.id
                 INNER JOIN HORARIO h ON t.HORARIOid = h.id
@@ -138,6 +144,8 @@ class Cita:
                 INNER JOIN MEDICO m ON p.MEDICOid = m.id
                 INNER JOIN ESPECIALIDAD e ON p.ESPECIALIDADid = e.id
                 INNER JOIN PACIENTE p_pac ON c.id_paciente = p_pac.id
+                INNER JOIN CONSULTORIO cons ON p.CONSULTORIOid = cons.id
+                INNER JOIN CENTRO_SALUD cs ON cons.id_centro_salud = cs.id
                 WHERE c.id = %s
             """
             cursor.execute(sql, (cita_id,))

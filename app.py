@@ -8,6 +8,7 @@ from routes.personal import ws_personal
 from routes.programacion import ws_programacion
 from routes.paciente import ws_paciente
 from routes.cita import ws_cita
+from routes.turno import ws_turno
 
 app = Flask(__name__, template_folder='views')
 app.register_blueprint(ws_rol, url_prefix='/rol')
@@ -18,6 +19,7 @@ app.register_blueprint(ws_personal, url_prefix='/personal')
 app.register_blueprint(ws_programacion, url_prefix='/programacion')
 app.register_blueprint(ws_paciente, url_prefix='/paciente')
 app.register_blueprint(ws_cita, url_prefix='/cita')
+app.register_blueprint(ws_turno, url_prefix='/turno')
 
 @app.route('/')
 def home():
