@@ -274,3 +274,45 @@ def listar_todos_web():
                 cursor.close()
             if con:
                 con.close()
+                
+# Para agregar en tu modelo Medico.py
+def listar_medicos():
+    """
+    Lista todos los médicos activos
+    """
+    from conexionBD import Conexion
+    
+    con = None
+    cursor = None
+    try:
+        con = Conexion().open
+        cursor = con.cursor()
+        
+        sql = """
+        SELECT 
+            id,
+            nombres,
+            ape_paterno,
+            ape_materno,
+            email,
+            telefono
+        FROM MEDICO
+        WHERE estado = 'A'
+        ORDER BY ape_paterno, ape_materno, nombres
+        """
+        
+        cursor.execute(sql)
+        resultado = cursor.fetchall()
+        
+        return resultado
+        
+    except Exception as e:
+        print(f"Error al listar médicos: {e}")
+        return []
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
+
+
