@@ -9,6 +9,9 @@ from routes.programacion import ws_programacion
 from routes.paciente import ws_paciente
 from routes.cita import ws_cita
 from routes.turno import ws_turno
+import models.especialidad as modelo_especialidad
+import models.medico as modelo_medico
+import models.cita as modelo_cita
 
 app = Flask(__name__, template_folder='views')
 app.register_blueprint(ws_rol, url_prefix='/rol')
@@ -35,7 +38,10 @@ def gestionar_medicos():
 
 @app.route('/agendas')
 def gestionar_agendas():
-    return render_template('web/agendas.html', active_page='agendas')
+    especialidades = modelo_especialidad.listarweb()
+    medicos = modelo_medico.listar_todos_web()
+    citas = modelo_cita.listar_todas_citas_web()
+    return render_template('web/agendas.html', active_page='agendas', especialidades=especialidades, medicos=medicos, citas=citas)
 
 @app.route('/reportes')
 def reportes():

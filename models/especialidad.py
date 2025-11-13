@@ -67,6 +67,7 @@ class Especialidad:
             print(f"Error al listar especialidades: {e}")
             return []
         
+        
     def listadoMedicosPorEspecialidad(self, especialidadId):
         cursor = self.db.cursor()
         try:
@@ -80,3 +81,16 @@ class Especialidad:
             print(f"Error al listar médicos por especialidad: {e}")
             return []
         
+def listarweb():
+        db = Conexion().open
+        cursor = db.cursor()
+        """
+        Lista todas las especialidades activas.
+        """
+        try:
+            sql = "SELECT id, nombre, descripcion FROM ESPECIALIDAD WHERE estado='A'"
+            cursor.execute(sql)
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"Error al listar especialidades: {e}")
+            return []

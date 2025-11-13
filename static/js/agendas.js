@@ -1,123 +1,205 @@
-// Agendas Management
+// Variables globales
+let currentDate = new Date();
+let selectedDate = new Date(2025, 9, 20); // 20 de octubre 2025
 
-// Calendar Navigation
-let currentDate = new Date(2025, 9, 20); // October 20, 2025
-
-document.getElementById('prevMonth')?.addEventListener('click', function() {
-    currentDate.setMonth(currentDate.getMonth() - 1);
-    updateCalendar();
-});
-
-document.getElementById('nextMonth')?.addEventListener('click', function() {
-    currentDate.setMonth(currentDate.getMonth() + 1);
-    updateCalendar();
-});
-
-function updateCalendar() {
-    const monthNames = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-                        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
-    
-    const monthTitle = document.getElementById('currentMonth');
-    if (monthTitle) {
-        monthTitle.textContent = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
-    }
-    
-    // TODO: Regenerate calendar days based on currentDate
-    console.log('Calendar updated:', currentDate);
+// Función para verificar si un año es bisiesto
+function isLeapYear(year) {
+    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
 }
 
-// Calendar Day Click
-document.querySelectorAll('.calendar-day:not(.other-month)').forEach(day => {
-    day.addEventListener('click', function() {
-        // Remove active class from all days
-        document.querySelectorAll('.calendar-day').forEach(d => d.classList.remove('active'));
+// Función para obtener el número de días en un mes
+function getDaysInMonth(month, year) {
+    const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    
+    if (month === 1 && isLeapYear(year)) { // Febrero en año bisiesto
+        return 29;
+    }
+    
+    return daysInMonth[month];
+}
+
+// Función para obtener el nombre del mes
+function getMonthName(month) {
+    const months = [
+        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    ];
+    return months[month];
+}
+
+// Función para formatear fecha como YYYY-MM-DD
+function formatDate(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// Función para formatear fecha en español
+function formatDateSpanish(date) {
+    const day = date.getDate();
+    const month = getMonthName(date.getMonth());
+    const year = date.getFullYear();
+    return `${day} de ${month} de ${year}`;
+}
+
+// Función para renderizar el calendario
+function renderCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
+    
+    // Actualizar el título del mes
+    document.getElementById('currentMonth').textContent = `${getMonthName(month)} ${year}`;
+    
+    // Obtener el primer día del mes (0 = Domingo, 1 = Lunes, etc.)
+    const firstDay = new Date(year, month, 1).getDay();
+    
+    // Obtener el número de días del mes actual
+    const daysInMonth = getDaysInMonth(month, year);
+    
+    // Obtener el número de días del mes anterior
+    const prevMonth = month === 0 ? 11 : month - 1;
+    const prevYear = month === 0 ? year - 1 : year;
+    const daysInPrevMonth = getDaysInMonth(prevMonth, prevYear);
+    
+    // Limpiar el grid (mantener solo los días de la semana)
+    const calendarGrid = document.querySelector('.calendar-grid');
+    const weekdays = calendarGrid.querySelectorAll('.calendar-weekday');
+    calendarGrid.innerHTML = '';
+    weekdays.forEach(day => calendarGrid.appendChild(day));
+    
+    // Agregar días del mes anterior
+    for (let i = firstDay - 1; i >= 0; i--) {
+        const day = daysInPrevMonth - i;
+        const dayElement = createDayElement(day, 'other-month', prevMonth, prevYear);
+        calendarGrid.appendChild(dayElement);
+    }
+    
+    // Agregar días del mes actual
+    for (let day = 1; day <= daysInMonth; day++) {
+        const isToday = day === selectedDate.getDate() && 
+                       month === selectedDate.getMonth() && 
+                       year === selectedDate.getFullYear();
         
-        // Add active class to clicked day (unless it's today)
-        if (!this.classList.contains('today')) {
-            this.classList.add('active');
+        const dayElement = createDayElement(day, isToday ? 'today' : '', month, year);
+        
+        // Agregar indicador de citas (puedes personalizar esto según tus datos)
+        if (hasAppointments(day, month, year)) {
+            dayElement.classList.add('has-appointments');
+            const dot = document.createElement('span');
+            dot.className = 'appointment-dot';
+            dayElement.appendChild(dot);
         }
         
-        const dayNumber = this.textContent.trim();
-        console.log(`Selected day: ${dayNumber}`);
-        
-        // TODO: Filter appointments by selected date
-    });
-});
+        calendarGrid.appendChild(dayElement);
+    }
+    
+    // Agregar días del siguiente mes para completar la grilla
+    const totalCells = calendarGrid.children.length - 7; // Restar los días de la semana
+    const remainingCells = 42 - totalCells - 7; // 6 semanas * 7 días - días ya agregados - weekdays
+    
+    for (let day = 1; day <= remainingCells; day++) {
+        const nextMonth = month === 11 ? 0 : month + 1;
+        const nextYear = month === 11 ? year + 1 : year;
+        const dayElement = createDayElement(day, 'other-month', nextMonth, nextYear);
+        calendarGrid.appendChild(dayElement);
+    }
+}
 
-// Filters
-document.getElementById('doctorFilter')?.addEventListener('change', function(e) {
-    const doctor = e.target.value;
-    console.log('Filter by doctor:', doctor);
-    // TODO: Filter appointments table
-});
-
-document.getElementById('especialidadFilter')?.addEventListener('change', function(e) {
-    const especialidad = e.target.value;
-    console.log('Filter by especialidad:', especialidad);
-    // TODO: Filter appointments table
-});
-
-document.getElementById('estadoFilter')?.addEventListener('change', function(e) {
-    const estado = e.target.value;
-    console.log('Filter by estado:', estado);
-    // TODO: Filter appointments table
-});
-
-document.getElementById('fechaFilter')?.addEventListener('change', function(e) {
-    const fecha = e.target.value;
-    console.log('Filter by fecha:', fecha);
-    // TODO: Filter appointments table and update calendar
-});
-
-// Nueva Cita Button
-document.getElementById('nuevaCitaBtn')?.addEventListener('click', function() {
-    // TODO: Open modal to create new appointment
-    alert('Abrir formulario para crear nueva cita');
-});
-
-// Action Buttons
-document.querySelectorAll('.btn-icon').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        const row = this.closest('tr');
-        const citaId = row.querySelector('td strong').textContent;
-        
-        if (this.querySelector('.fa-eye')) {
-            console.log('Ver detalles de cita:', citaId);
-            // TODO: Show appointment details modal
-            alert(`Ver detalles de cita ${citaId}`);
-        } else if (this.querySelector('.fa-edit')) {
-            console.log('Editar cita:', citaId);
-            // TODO: Open edit appointment modal
-            alert(`Editar cita ${citaId}`);
-        } else if (this.querySelector('.fa-times')) {
-            console.log('Cancelar cita:', citaId);
-            // TODO: Confirm and cancel appointment
-            if (confirm(`¿Está seguro de cancelar la cita ${citaId}?`)) {
-                alert(`Cita ${citaId} cancelada`);
-                // Update status badge
-                const badge = row.querySelector('.status-badge');
-                badge.className = 'status-badge status-cancelado';
-                badge.textContent = 'Cancelado';
-            }
-        }
-    });
-});
-
-// Table Row Click
-document.querySelectorAll('.appointments-table tbody tr').forEach(row => {
-    row.addEventListener('click', function() {
-        // Remove active class from all rows
-        document.querySelectorAll('.appointments-table tbody tr').forEach(r => {
-            r.style.backgroundColor = '';
+// Función para crear un elemento de día
+function createDayElement(day, className, month, year) {
+    const dayElement = document.createElement('div');
+    dayElement.className = `calendar-day ${className}`;
+    dayElement.textContent = day;
+    
+    // Agregar evento click solo si no es de otro mes
+    if (!className.includes('other-month')) {
+        dayElement.addEventListener('click', function() {
+            selectDate(day, month, year);
         });
-        
-        // Highlight selected row
-        this.style.backgroundColor = '#e3f2fd';
-        
-        const citaId = this.querySelector('td strong').textContent;
-        console.log('Selected appointment:', citaId);
-    });
+        dayElement.style.cursor = 'pointer';
+    }
+    
+    return dayElement;
+}
+
+// Función para verificar si un día tiene citas (placeholder)
+function hasAppointments(day, month, year) {
+    // Aquí puedes agregar tu lógica para verificar si hay citas
+    // Por ahora, marca algunos días de ejemplo
+    const appointmentDays = [11, 14, 15, 22, 25];
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    
+    return month === currentMonth && 
+           year === currentYear && 
+           appointmentDays.includes(day);
+}
+
+// Función para seleccionar una fecha
+function selectDate(day, month, year) {
+    selectedDate = new Date(year, month, day);
+    
+    // Actualizar el input de fecha en los filtros
+    document.getElementById('fechaFilter').value = formatDate(selectedDate);
+    
+    // Actualizar el texto de fecha seleccionada
+    document.getElementById('selectedDateText').textContent = formatDateSpanish(selectedDate);
+    
+    // Volver a renderizar el calendario para actualizar la clase 'today'
+    renderCalendar();
+    
+    console.log('Fecha seleccionada:', formatDate(selectedDate));
+}
+
+// Función para cambiar de mes
+function changeMonth(delta) {
+    currentDate.setMonth(currentDate.getMonth() + delta);
+    renderCalendar();
+}
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar el calendario
+    renderCalendar();
+    
+    // Botones de navegación del mes
+    document.getElementById('prevMonth').addEventListener('click', () => changeMonth(-1));
+    document.getElementById('nextMonth').addEventListener('click', () => changeMonth(1));
+    
+    // Filtros
+    document.getElementById('aplicarFiltrosBtn').addEventListener('click', aplicarFiltros);
+    document.getElementById('restablecerBtn').addEventListener('click', restablecerFiltros);
+    
+    // Actualizar texto de fecha inicial
+    document.getElementById('selectedDateText').textContent = formatDateSpanish(selectedDate);
 });
 
-console.log('Agendas page loaded');
+// Función para aplicar filtros
+function aplicarFiltros() {
+    const doctorId = document.getElementById('doctorFilter').value;
+    const especialidadId = document.getElementById('especialidadFilter').value;
+    const estado = document.getElementById('estadoFilter').value;
+    const fecha = document.getElementById('fechaFilter').value;
+    
+    console.log('Aplicando filtros:', { doctorId, especialidadId, estado, fecha });
+    
+    // Aquí puedes agregar la lógica para filtrar las citas
+    // Por ejemplo, hacer una petición AJAX al servidor
+}
+
+// Función para restablecer filtros
+function restablecerFiltros() {
+    document.getElementById('doctorFilter').value = 'all';
+    document.getElementById('especialidadFilter').value = 'all';
+    document.getElementById('estadoFilter').value = 'all';
+    document.getElementById('fechaFilter').value = '2025-10-20';
+    
+    selectedDate = new Date(2025, 9, 20);
+    currentDate = new Date(2025, 9, 20);
+    
+    renderCalendar();
+    document.getElementById('selectedDateText').textContent = formatDateSpanish(selectedDate);
+    
+    console.log('Filtros restablecidos');
+}

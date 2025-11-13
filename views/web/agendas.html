@@ -15,17 +15,16 @@
     <div class="filter-group">
         <select class="filter-select" id="doctorFilter">
             <option value="all">Todos los Médicos</option>
-            <option value="dr-gomez">Dr. Alejandro Gómez</option>
-            <option value="dra-garcia">Dra. María García</option>
-            <option value="dr-martinez">Dr. Carlos Martínez</option>
+            {% for doctor in medicos %}
+            <option value="{{ doctor.id }}">{{ doctor.nombres }} {{ doctor.ape_paterno }} {{ doctor.ape_materno }}</option>
+            {% endfor %}
         </select>
         
         <select class="filter-select" id="especialidadFilter">
             <option value="all">Todas las Especialidades</option>
-            <option value="cardiologia">Cardiología</option>
-            <option value="pediatria">Pediatría</option>
-            <option value="medicina-general">Medicina General</option>
-            <option value="traumatologia">Traumatología</option>
+            {% for especialidad in especialidades %}
+            <option value="{{ especialidad.id }}">{{ especialidad.nombre }}</option>
+            {% endfor %}
         </select>
         
         <select class="filter-select" id="estadoFilter">
@@ -38,9 +37,13 @@
         <input type="date" class="filter-date" id="fechaFilter" value="2025-10-20">
     </div>
     
-    <button class="btn btn-primary" id="nuevaCitaBtn">
-        <i class="fas fa-plus"></i>
-        Nueva Cita
+    <button class="btn btn-primary" id="aplicarFiltrosBtn">
+        <i class="fas fa-filter"></i>
+        Aplicar filtros
+    </button>
+    <button class="btn btn-view" id="restablecerBtn">
+        <i class="fas fa-undo"></i>
+        Restablecer
     </button>
 </div>
 
@@ -126,17 +129,38 @@
                 <table class="appointments-table">
                     <thead>
                         <tr>
-                            <th># Cita</th>
+                            <th>ID Cita</th>
                             <th>Fecha</th>
                             <th>Hora</th>
                             <th>Doctor</th>
                             <th>Paciente</th>
                             <th>Especialidad</th>
                             <th>Estado</th>
-                            <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="appointmentsTableBody">
+                        {% for cita in citas %}
+                        <tr>
+                            <td><strong>#{{ cita.id }}</strong></td>
+                            <td>{{ cita.fecha }}</td>
+                            <td>{{ cita.hora_inicio }}</td>
+                            <td>{{ cita.medico_nombres }} {{ cita.medico_ape_paterno }} {{ cita.medico_ape_materno }}</td>
+                            <td>{{ cita.paciente_nombres }} {{ cita.paciente_ape_paterno }} {{ cita.paciente_ape_materno }}</td>
+                            <td>{{ cita.especialidad }}</td>
+                            <td>
+                                {% if cita.estado == 'A' %}
+                                <span class="status-badge status-confirmado">Confirmado</span>
+                                {% elif cita.estado == 'P' %}
+                                <span class="status-badge status-pendiente">Pendiente</span>
+                                {% elif cita.estado == 'C' %}
+                                <span class="status-badge status-cancelado">Cancelado</span>
+                                {% endif %}
+                            </td>
+                            
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <!-- <tbody>
                         <tr>
                             <td><strong>#001</strong></td>
                             <td>20 Oct 2025</td>
@@ -237,7 +261,7 @@
                                 </button>
                             </td>
                         </tr>
-                    </tbody>
+                    </tbody> -->
                 </table>
             </div>
         </div>

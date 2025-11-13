@@ -160,6 +160,71 @@ class Cita:
                 cursor.close()
             if con:
                 con.close()
-
-
-
+                
+                
+def listar_todas_citas_web():
+        con = None
+        cursor = None
+        try:
+            con = Conexion().open
+            cursor = con.cursor()
+            
+            sql = """
+            SELECT 
+                C.id,
+                C.tipo_atencion,
+                C.direccion_domicilio,
+                C.estado,
+                C.codigo_qr,
+                C.fecha_creacion,
+                H.fecha,
+                T.hora_inicio,
+                P.nombres AS paciente_nombres,
+                P.ape_paterno AS paciente_ape_paterno,
+                P.ape_materno AS paciente_ape_materno,
+                M.nombres AS medico_nombres,
+                M.ape_paterno AS medico_ape_paterno,
+                M.ape_materno AS medico_ape_materno,
+                E.nombre AS especialidad
+            FROM CITA C
+            INNER JOIN PACIENTE P ON C.id_paciente = P.id
+            INNER JOIN TURNO T ON C.TURNOid = T.id
+            INNER JOIN HORARIO H ON T.HORARIOid = H.id
+            INNER JOIN PROGRAMACION PR ON H.PROGRAMACIONid = PR.id
+            INNER JOIN MEDICO M ON PR.MEDICOid = M.id
+            INNER JOIN ESPECIALIDAD E ON PR.ESPECIALIDADid = E.id
+            ORDER BY H.fecha, T.hora_inicio
+            """
+            cursor.execute(sql)
+            resultado = cursor.fetchall()
+            
+            citas = []
+            for row in resultado:
+                cita = {
+                    'id': row['id'],
+                    'tipo_atencion': row['tipo_atencion'],
+                    'direccion_domicilio': row['direccion_domicilio'],
+                    'estado': row['estado'],
+                    'codigo_qr': row['codigo_qr'],
+                    'fecha_creacion': row['fecha_creacion'],
+                    'fecha': row['fecha'],
+                    'hora_inicio': row['hora_inicio'],
+                    'paciente_nombres': row['paciente_nombres'],
+                    'paciente_ape_paterno': row['paciente_ape_paterno'],
+                    'paciente_ape_materno': row['paciente_ape_materno'],
+                    'medico_nombres': row['medico_nombres'],
+                    'medico_ape_paterno': row['medico_ape_paterno'],
+                    'medico_ape_materno': row['medico_ape_materno'],
+                    'especialidad': row['especialidad']
+                }
+                citas.append(cita)
+            
+            return citas
+        except Exception as e:
+            print(f"Error al listar citas: {e}")
+            return []
+        finally:
+            if cursor:
+                cursor.close()
+            if con:
+                con.close()

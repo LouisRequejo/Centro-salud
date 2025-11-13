@@ -218,3 +218,59 @@ class Medico:
                 cursor.close()
             if con:
                 con.close()
+                
+                
+def listar_todos_web():
+        
+        con = None
+        cursor = None
+        try:
+            con = Conexion().open
+            cursor = con.cursor()
+            
+            sql = """
+            SELECT DISTINCT
+                M.id,
+                M.nombres,
+                M.ape_paterno,
+                M.ape_materno,
+                M.DNI,
+                M.email,
+                M.telefono,
+                M.estado,
+                M.id_personal_validado,
+                E.nombre AS especialidad
+            FROM MEDICO M
+            LEFT JOIN PROGRAMACION P ON M.id = P.MEDICOid
+            LEFT JOIN ESPECIALIDAD E ON P.ESPECIALIDADid = E.id
+            WHERE M.estado != 'I'
+            ORDER BY M.nombres, M.ape_paterno
+            """
+            cursor.execute(sql)
+            resultado = cursor.fetchall()
+            
+            medicos = []
+            for row in resultado:
+                medico = {
+                    'id': row['id'],
+                    'nombres': row['nombres'],
+                    'ape_paterno': row['ape_paterno'],
+                    'ape_materno': row['ape_materno'],
+                    'DNI': row['DNI'],
+                    'email': row['email'],
+                    'telefono': row['telefono'],
+                    'estado': row['estado'],
+                    'id_personal_validado': row['id_personal_validado'],
+                    'especialidad': row['especialidad'] if row['especialidad'] else 'Sin Especialidad'
+                }
+                medicos.append(medico)
+            
+            return medicos
+        except Exception as e:
+            print(f"Error al listar médicos: {e}")
+            return []
+        finally:
+            if cursor:
+                cursor.close()
+            if con:
+                con.close()
