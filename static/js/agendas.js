@@ -141,7 +141,8 @@ function selectDate(day, month, year) {
     selectedDate = new Date(year, month, day);
     
     // Actualizar el input de fecha en los filtros
-    document.getElementById('fechaFilter').value = formatDate(selectedDate);
+    const fechaFormateada = formatDate(selectedDate);
+    document.getElementById('fechaFilter').value = fechaFormateada;
     
     // Actualizar el texto de fecha seleccionada
     document.getElementById('selectedDateText').textContent = formatDateSpanish(selectedDate);
@@ -149,7 +150,10 @@ function selectDate(day, month, year) {
     // Volver a renderizar el calendario para actualizar la clase 'today'
     renderCalendar();
     
-    console.log('Fecha seleccionada:', formatDate(selectedDate));
+    // Cargar las citas de esa fecha automáticamente
+    cargarCitasPorFecha(fechaFormateada);
+    
+    console.log('Fecha seleccionada:', fechaFormateada);
 }
 
 // Función para cambiar de mes
@@ -176,7 +180,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Función para aplicar filtros
-function aplicarFiltros() {
+async function aplicarFiltros() {
     const doctorId = document.getElementById('doctorFilter').value;
     const especialidadId = document.getElementById('especialidadFilter').value;
     const estado = document.getElementById('estadoFilter').value;
@@ -184,8 +188,46 @@ function aplicarFiltros() {
     
     console.log('Aplicando filtros:', { doctorId, especialidadId, estado, fecha });
     
-    // Aquí puedes agregar la lógica para filtrar las citas
-    // Por ejemplo, hacer una petición AJAX al servidor
+    // Mostrar indicador de carga
+    const tbody = document.getElementById('appointmentsTableBody');
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px;">Cargando...</td></tr>';
+    
+    try {
+        const response = await fetch('/cita/agendas/filtrar', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                medico_id: doctorId === 'all' ? null : doctorId,
+                especialidad_id: especialidadId === 'all' ? null : especialidadId,
+                estado: estado === 'all' ? null : estado,
+                fecha: fecha || null
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.status) {
+            actualizarTablaCitas(data.data.citas);
+            
+            // Opcional: mostrar estadísticas
+            if (data.data.estadisticas) {
+                console.log('Estadísticas:', data.data.estadisticas);
+            }
+            
+            // Mostrar mensaje si no hay resultados
+            if (data.data.total === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #666;">No se encontraron citas con los filtros seleccionados</td></tr>';
+            }
+        } else {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Error al cargar las citas</td></tr>';
+            console.error('Error:', data.message);
+        }
+    } catch (error) {
+        console.error('Error al aplicar filtros:', error);
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: red;">Error de conexión</td></tr>';
+    }
 }
 
 // Función para restablecer filtros
@@ -202,4 +244,61 @@ function restablecerFiltros() {
     document.getElementById('selectedDateText').textContent = formatDateSpanish(selectedDate);
     
     console.log('Filtros restablecidos');
+    
+    // Recargar todas las citas
+    aplicarFiltros();
+}
+
+// Función para actualizar la tabla de citas
+function actualizarTablaCitas(citas) {
+    const tbody = document.getElementById('appointmentsTableBody');
+    
+    if (citas.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 20px; color: #666;">No hay citas disponibles</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = '';
+    
+    citas.forEach(cita => {
+        const row = document.createElement('tr');
+        
+        // Determinar el badge de estado
+        let estadoBadge = '';
+        if (cita.estado === 'A') {
+            estadoBadge = '<span class="status-badge status-confirmado">Confirmado</span>';
+        } else if (cita.estado === 'P') {
+            estadoBadge = '<span class="status-badge status-pendiente">Pendiente</span>';
+        } else if (cita.estado === 'C') {
+            estadoBadge = '<span class="status-badge status-cancelado">Cancelado</span>';
+        }
+        
+        row.innerHTML = `
+            <td><strong>#${cita.id}</strong></td>
+            <td>${cita.fecha}</td>
+            <td>${cita.hora_inicio}</td>
+            <td>${cita.medico_nombres} ${cita.medico_ape_paterno} ${cita.medico_ape_materno}</td>
+            <td>${cita.paciente_nombres} ${cita.paciente_ape_paterno} ${cita.paciente_ape_materno}</td>
+            <td>${cita.especialidad}</td>
+            <td>${estadoBadge}</td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// Función para cargar citas de una fecha específica
+async function cargarCitasPorFecha(fecha) {
+    try {
+        const response = await fetch(`/cita/agendas/citas-por-fecha/${fecha}`);
+        const data = await response.json();
+        
+        if (data.status) {
+            actualizarTablaCitas(data.data.citas);
+        } else {
+            console.error('Error:', data.message);
+        }
+    } catch (error) {
+        console.error('Error al cargar citas por fecha:', error);
+    }
 }

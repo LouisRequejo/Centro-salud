@@ -228,3 +228,189 @@ def listar_todas_citas_web():
                 cursor.close()
             if con:
                 con.close()
+                
+                
+def filtrar_citas(medico_id=None, especialidad_id=None, estado=None, fecha=None):
+    """
+    Filtra las citas según los criterios proporcionados
+    
+    Args:
+        medico_id: ID del médico (None para todos)
+        especialidad_id: ID de la especialidad (None para todas)
+        estado: Estado de la cita ('A', 'P', 'C' o None para todos)
+        fecha: Fecha en formato 'YYYY-MM-DD' (None para todas)
+    
+    Returns:
+        Lista de citas filtradas
+    """
+    con = None
+    cursor = None
+    try:
+        con = Conexion().open
+        cursor = con.cursor()
+        
+        # Query base
+        sql = """
+        SELECT 
+            C.id,
+            C.tipo_atencion,
+            C.direccion_domicilio,
+            C.estado,
+            C.codigo_qr,
+            C.fecha_creacion,
+            H.fecha,
+            T.hora_inicio,
+            P.nombres AS paciente_nombres,
+            P.ape_paterno AS paciente_ape_paterno,
+            P.ape_materno AS paciente_ape_materno,
+            M.id AS medico_id,
+            M.nombres AS medico_nombres,
+            M.ape_paterno AS medico_ape_paterno,
+            M.ape_materno AS medico_ape_materno,
+            E.id AS especialidad_id,
+            E.nombre AS especialidad
+        FROM CITA C
+        INNER JOIN PACIENTE P ON C.id_paciente = P.id
+        INNER JOIN TURNO T ON C.TURNOid = T.id
+        INNER JOIN HORARIO H ON T.HORARIOid = H.id
+        INNER JOIN PROGRAMACION PR ON H.PROGRAMACIONid = PR.id
+        INNER JOIN MEDICO M ON PR.MEDICOid = M.id
+        INNER JOIN ESPECIALIDAD E ON PR.ESPECIALIDADid = E.id
+        WHERE 1=1
+        """
+        
+        # Lista para los parámetros
+        params = []
+        
+        # Agregar filtros dinámicamente
+        if medico_id and medico_id != 'all':
+            sql += " AND M.id = %s"
+            params.append(medico_id)
+        
+        if especialidad_id and especialidad_id != 'all':
+            sql += " AND E.id = %s"
+            params.append(especialidad_id)
+        
+        if estado and estado != 'all':
+            # Mapear estados desde el filtro al valor en BD
+            estado_map = {
+                'confirmado': 'A',
+                'pendiente': 'P',
+                'cancelado': 'C'
+            }
+            estado_bd = estado_map.get(estado.lower(), estado)
+            sql += " AND C.estado = %s"
+            params.append(estado_bd)
+        
+        if fecha:
+            sql += " AND H.fecha = %s"
+            params.append(fecha)
+        
+        # Ordenar resultados
+        sql += " ORDER BY H.fecha, T.hora_inicio"
+        
+        cursor.execute(sql, tuple(params))
+        resultado = cursor.fetchall()
+        
+        citas = []
+        for row in resultado:
+            cita = {
+                'id': row['id'],
+                'tipo_atencion': row['tipo_atencion'],
+                'direccion_domicilio': row['direccion_domicilio'],
+                'estado': row['estado'],
+                'codigo_qr': row['codigo_qr'],
+                'fecha_creacion': row['fecha_creacion'],
+                'fecha': row['fecha'].strftime('%Y-%m-%d') if hasattr(row['fecha'], 'strftime') else str(row['fecha']),
+                'hora_inicio': str(row['hora_inicio']),
+                'paciente_nombres': row['paciente_nombres'],
+                'paciente_ape_paterno': row['paciente_ape_paterno'],
+                'paciente_ape_materno': row['paciente_ape_materno'],
+                'medico_id': row['medico_id'],
+                'medico_nombres': row['medico_nombres'],
+                'medico_ape_paterno': row['medico_ape_paterno'],
+                'medico_ape_materno': row['medico_ape_materno'],
+                'especialidad_id': row['especialidad_id'],
+                'especialidad': row['especialidad']
+            }
+            citas.append(cita)
+        
+        return citas
+        
+    except Exception as e:
+        print(f"Error al filtrar citas: {e}")
+        return []
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
+
+
+def obtener_estadisticas_citas(medico_id=None, especialidad_id=None, fecha_inicio=None, fecha_fin=None):
+    """
+    Obtiene estadísticas de las citas para el dashboard
+    
+    Returns:
+        Diccionario con estadísticas
+    """
+    con = None
+    cursor = None
+    try:
+        con = Conexion().open
+        cursor = con.cursor()
+        
+        sql_base = """
+        SELECT 
+            COUNT(*) as total,
+            SUM(CASE WHEN C.estado = 'A' THEN 1 ELSE 0 END) as confirmadas,
+            SUM(CASE WHEN C.estado = 'P' THEN 1 ELSE 0 END) as pendientes,
+            SUM(CASE WHEN C.estado = 'C' THEN 1 ELSE 0 END) as canceladas
+        FROM CITA C
+        INNER JOIN TURNO T ON C.TURNOid = T.id
+        INNER JOIN HORARIO H ON T.HORARIOid = H.id
+        INNER JOIN PROGRAMACION PR ON H.PROGRAMACIONid = PR.id
+        WHERE 1=1
+        """
+        
+        params = []
+        
+        if medico_id and medico_id != 'all':
+            sql_base += " AND PR.MEDICOid = %s"
+            params.append(medico_id)
+        
+        if especialidad_id and especialidad_id != 'all':
+            sql_base += " AND PR.ESPECIALIDADid = %s"
+            params.append(especialidad_id)
+        
+        if fecha_inicio:
+            sql_base += " AND H.fecha >= %s"
+            params.append(fecha_inicio)
+        
+        if fecha_fin:
+            sql_base += " AND H.fecha <= %s"
+            params.append(fecha_fin)
+        
+        cursor.execute(sql_base, tuple(params))
+        resultado = cursor.fetchone()
+        
+        return {
+            'total': resultado['total'] or 0,
+            'confirmadas': resultado['confirmadas'] or 0,
+            'pendientes': resultado['pendientes'] or 0,
+            'canceladas': resultado['canceladas'] or 0
+        }
+        
+    except Exception as e:
+        print(f"Error al obtener estadísticas: {e}")
+        return {
+            'total': 0,
+            'confirmadas': 0,
+            'pendientes': 0,
+            'canceladas': 0
+        }
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()

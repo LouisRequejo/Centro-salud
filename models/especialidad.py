@@ -94,3 +94,40 @@ def listarweb():
         except Exception as e:
             print(f"Error al listar especialidades: {e}")
             return []
+        
+        
+def listar_especialidades():
+    """
+    Lista todas las especialidades activas
+    """
+    from conexionBD import Conexion
+    
+    con = None
+    cursor = None
+    try:
+        con = Conexion().open
+        cursor = con.cursor()
+        
+        sql = """
+        SELECT 
+            id,
+            nombre,
+            descripcion
+        FROM ESPECIALIDAD
+        WHERE estado = 'A'
+        ORDER BY nombre
+        """
+        
+        cursor.execute(sql)
+        resultado = cursor.fetchall()
+        
+        return resultado
+        
+    except Exception as e:
+        print(f"Error al listar especialidades: {e}")
+        return []
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
