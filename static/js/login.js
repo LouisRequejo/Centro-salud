@@ -9,7 +9,7 @@ $(document).ready(function() {
         btnLogin.prop('disabled', true).text('Iniciando sesión...');
         
         $.ajax({
-            url: '/login',
+            url: '/personal/loginPersonal',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -28,7 +28,7 @@ $(document).ready(function() {
                 }, 1000);
             },
             error: function(xhr) {
-                let mensaje = 'Error al iniciar sesión';
+                let mensaje = 'Error al iniciar sesión unu';
                 
                 if (xhr.responseJSON && xhr.responseJSON.message) {
                     mensaje = xhr.responseJSON.message;

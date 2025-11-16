@@ -1,0 +1,8 @@
+# Ignorar todas las imágenes QR generadas
+*.png
+*.jpg
+*.jpeg
+
+# Excepto el archivo .gitkeep
+!.gitkeep
+!.gitignore

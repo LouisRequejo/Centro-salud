@@ -56,9 +56,7 @@ class Paciente:
             if result:
                 # Verificar la contraseña
                 try:
-                    print("[DEBUG] 11. Intentando verificar contraseña con Argon2...")
                     self.ph.verify(result['clave'], clave)
-                    print("[DEBUG] 12. ✅ Contraseña verificada correctamente!")
                     return {
                         'id': result['id'],
                         'nombre': result['nombre'],

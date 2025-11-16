@@ -55,19 +55,79 @@ class Especialidad:
             return False, "Error al validar especialidad."
     
     def listar(self):
+        cursor = self.db.cursor()
         """
         Lista todas las especialidades activas.
         """
         try:
             sql = "SELECT id, nombre, descripcion FROM ESPECIALIDAD WHERE estado='A'"
-            self.db.execute(sql)
-            return self.db.fetchall()
+            cursor.execute(sql)
+            return cursor.fetchall()
         except Exception as e:
             print(f"Error al listar especialidades: {e}")
             return []
-
-
-
-
-
         
+        
+    def listadoMedicosPorEspecialidad(self, especialidadId):
+        cursor = self.db.cursor()
+        try:
+            sql = """SELECT CONCAT('Dr. ', MD.nombres, ' ', MD.ape_paterno) AS DOCTOR, EP.nombre AS ESPECIALIDAD
+                    FROM PROGRAMACION PR INNER JOIN ESPECIALIDAD EP ON PR.ESPECIALIDADid = EP.id
+                    INNER JOIN MEDICO MD ON PR.MEDICOid = MD.id
+                    WHERE EP.ID = %s"""
+            cursor.execute(sql, (especialidadId,))
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"Error al listar médicos por especialidad: {e}")
+            return []
+        
+def listarweb():
+        db = Conexion().open
+        cursor = db.cursor()
+        """
+        Lista todas las especialidades activas.
+        """
+        try:
+            sql = "SELECT id, nombre, descripcion FROM ESPECIALIDAD WHERE estado='A'"
+            cursor.execute(sql)
+            return cursor.fetchall()
+        except Exception as e:
+            print(f"Error al listar especialidades: {e}")
+            return []
+        
+        
+def listar_especialidades():
+    """
+    Lista todas las especialidades activas
+    """
+    from conexionBD import Conexion
+    
+    con = None
+    cursor = None
+    try:
+        con = Conexion().open
+        cursor = con.cursor()
+        
+        sql = """
+        SELECT 
+            id,
+            nombre,
+            descripcion
+        FROM ESPECIALIDAD
+        WHERE estado = 'A'
+        ORDER BY nombre
+        """
+        
+        cursor.execute(sql)
+        resultado = cursor.fetchall()
+        
+        return resultado
+        
+    except Exception as e:
+        print(f"Error al listar especialidades: {e}")
+        return []
+    finally:
+        if cursor:
+            cursor.close()
+        if con:
+            con.close()
